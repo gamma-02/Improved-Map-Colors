@@ -1,14 +1,13 @@
 {
   "required": true,
-  "package": "org.gneisscode.improvedmapcolors.mixin",
+  "package": "org.gneisscode.improvedmapcolors.fabric.mixin",
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
   ],
   "mixins": [
-    "BlockBehaviourPropertiesMixin",
-    "MapColorMixin",
-    "MapItemMixin"
+    "JustLoadMyConfigAlready",
+    "MapColorFabricMixin"
   ],
   "injectors": {
     "defaultRequire": 1

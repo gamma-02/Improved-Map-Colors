@@ -2,6 +2,10 @@ architectury {
     common rootProject.enabled_platforms.split(',')
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/improvedmapcolors-common.accesswidener")
+}
+
 dependencies {
     // We depend on Fabric Loader here to use the Fabric @Environment annotations,
     // which get remapped to the correct annotations on each platform.
@@ -10,6 +14,8 @@ dependencies {
 
     modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
 
-    modImplementation include ("maven.modrinth:midnightlib:${project.midnightlib_version}")
+//    modImplementation include ("maven.modrinth:midnightlib:${project.midnightlib_version}")
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:${project.forge_config_version}"
+
 
 }

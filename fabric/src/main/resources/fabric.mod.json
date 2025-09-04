@@ -19,12 +19,12 @@
     ],
     "client": [
       "org.gneisscode.improvedmapcolors.fabric.client.ImprovedMapColorsFabricClient"
-    ],
-    "modmenu": [ "org.gneisscode.improvedmapcolors.fabric.compat.ModMenuApiImpl" ]
-
+    ]
   },
+  "__comment": "    \"modmenu\": [ \"org.gneisscode.improvedmapcolors.fabric.compat.ModMenuApiImpl\" ]\n",
   "mixins": [
-    "improvedmapcolors.mixins.json"
+    "improvedmapcolors.mixins.json",
+    "improvedmapcolorsfabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.17.2",

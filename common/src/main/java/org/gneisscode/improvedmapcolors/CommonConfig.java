@@ -1,14 +1,50 @@
 package org.gneisscode.improvedmapcolors;
 
 import com.google.common.collect.Lists;
-import eu.midnightdust.lib.config.MidnightConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommonConfig extends MidnightConfig {
+public class CommonConfig /*extends MidnightConfig*/ {
+
+    public static final CommonConfig CONFIG;
+    public static final ModConfigSpec CONFIG_SPEC;
+
+    private CommonConfig(ModConfigSpec.Builder builder){
+//        builder.push("General");
+
+        configColorList = builder
+                .comment("List of colors to replace vanilla map colors, defaulting to Vanilla colors (gneiss colors)")
+                .defineList("colorlist", defaultColorList, () -> new String(), CommonConfig::validateColor);
+
+        useFile = builder.comment("Use a list of colors from the CSV defined below").define("use_file", false);
+
+        colorCsvPath = builder
+                .comment("Path to a CSV list of files like: |hex color|[optional id]|")
+                .comment("If no ID is supplied, the id will be the column number in the file")
+                .define("color_file", "", CommonConfig::fileValidator);
+
+
+
+
+
+
+
+    }
+
+    public final ModConfigSpec.ConfigValue<List<? extends String>> configColorList;
+    public final ModConfigSpec.BooleanValue useFile;
+    public final ModConfigSpec.ConfigValue<String> colorCsvPath;
+    public List<Color> indexIdColorList;
+
 
     public static final ArrayList<String> defaultColorList = Lists.newArrayList(
             "#000000",
@@ -38,7 +74,7 @@ public class CommonConfig extends MidnightConfig {
             "#7f3fb2",
             "#334cb2",
             "#664c33",
-            "#ff0000",
+            "#667f33",
             "#993333",
             "#191919",
             "#faee4d",
@@ -75,28 +111,61 @@ public class CommonConfig extends MidnightConfig {
             "#7fa796"
     );
 
-    @Comment(category = "colors") public static Comment color_list_comment;
-    @Entry(category = "colors", isColor = true, name = "New Color List") public static List<String> ColorList = new ArrayList<>(defaultColorList);
-    public static List<Color> CorrectTypeColorList = ColorList.stream().map(Color::decode).toList();
 
-    @Comment(category = "colors") public static Comment color_file_comment;
-    @Entry(category = "colors",
-            selectionMode = JFileChooser.FILES_ONLY,
-            fileExtensions = {"csv"}, // Define valid file extensions
-            fileChooserType = JFileChooser.SAVE_DIALOG,
-            name = "Color List File")
-    public static String ColorFile = "";
+    static{
+        Pair<CommonConfig, ModConfigSpec> configPair =
+                new ModConfigSpec.Builder().configure(CommonConfig::new);
 
-    @Comment(category = "colors") public static Comment use_color_file_comment;
-    @Entry(category = "colors", name = "Use File") public static boolean UseColorFile = false;
-
-    @Entry(category = "lists", name = "I am a string list!") public static List<String> stringList = Lists.newArrayList("String1", "String2"); // Array String Lists are also supported
-    @Entry(category = "lists", isColor = true, name = "I am a color list!") public static List<String> colorList = Lists.newArrayList("#ac5f99", "#11aa44"); // Lists also support colors
+        CONFIG = configPair.getLeft();
+        CONFIG_SPEC = configPair.getRight();
 
 
-    //block states
+    }
 
-//    @Entry(category = "blocks")
+    public static boolean validateColor(Object o){
+        if(!(o instanceof String s)){
+            return false;
+        }
+        try{
+            Color c = Color.decode(s);
+        }catch (NumberFormatException nfe){
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean fileValidator(Object o){
+        if(!(o instanceof String s)){
+            return false;
+        }
+
+        if(s.isEmpty()){
+            return true;
+        }
+
+        Path p = null;
+        try {
+            p = Paths.get(s);
+        } catch (InvalidPathException | NullPointerException ex) {
+            return false;
+        }
+
+        File f = p.toFile();
+
+        return f.exists() && f.isFile() && s.endsWith(".csv");
+    }
+
+
+    public static void initIndexIdColorList() {
+        if(CommonConfig.CONFIG.useFile.get()){
+            //handle using the file and committing that to the typeCorrect
+            CommonConfig.CONFIG.indexIdColorList = new ArrayList<>();
+        }else{
+            CommonConfig.CONFIG.indexIdColorList = CommonConfig.CONFIG.configColorList.get().stream().map(Color::decode).toList();
+        }
+
+
+    }
 
 
 

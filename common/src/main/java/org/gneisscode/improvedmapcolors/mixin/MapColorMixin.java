@@ -1,5 +1,6 @@
 package org.gneisscode.improvedmapcolors.mixin;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.world.level.material.MapColor;
 import org.gneisscode.improvedmapcolors.CommonConfig;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +15,8 @@ public class MapColorMixin {
 
     @Inject(method = "<clinit>", at = @At("HEAD"))
     private static void loadedNow(CallbackInfo ci){
-        System.out.println("MapColor was loaded! (we may want to do stuff here!)");
+        LogUtils.getLogger().info("MapColor Common clinit");
+
     }
 
     @ModifyArgs(
@@ -23,11 +25,13 @@ public class MapColorMixin {
     )
     private static void injectNew(Args args){
 
-        if(CommonConfig.ColorList == null || CommonConfig.UseColorFile){
-            return;
-        }
 
-        args.set(1, CommonConfig.CorrectTypeColorList.get(args.get(0)).getRGB());
+
+//        if(CommonConfig.CONFIG == null || CommonConfig.CONFIG.useFile.get()){
+//            return;
+//        }
+//
+//        args.set(1, CommonConfig.CONFIG.indexIdColorList.get(args.get(0)).getRGB());
 
     }
 }

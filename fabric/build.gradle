@@ -40,8 +40,11 @@ dependencies {
 
     modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 
-    modImplementation include ("maven.modrinth:midnightlib:${project.midnightlib_version}")
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${project.forge_config_version}"
+    include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${project.forge_config_version}"
 
+    // Fabric
+//    modLocalRuntime "fuzs.forgeconfigscreens:forgeconfigscreens-fabric:"
 
 }
 

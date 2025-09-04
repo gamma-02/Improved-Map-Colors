@@ -39,7 +39,7 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
 
-    modImplementation include ("maven.modrinth:midnightlib:${project.neoforge_midnightlib_version}")
+//    runtimeOnly "fuzs.forgeconfigscreens:forgeconfigscreens-neoforge:${project.forge_config_version}"
 
 }
 
