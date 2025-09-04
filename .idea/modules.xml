@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/improvedmapcolors.common.iml" filepath="$PROJECT_DIR$/.idea/modules/common/improvedmapcolors.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/improvedmapcolors.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/improvedmapcolors.common.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/improvedmapcolors.common.test.iml" filepath="$PROJECT_DIR$/.idea/modules/common/improvedmapcolors.common.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fabric/improvedmapcolors.fabric.main.iml" filepath="$PROJECT_DIR$/.idea/modules/fabric/improvedmapcolors.fabric.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fabric/improvedmapcolors.fabric.test.iml" filepath="$PROJECT_DIR$/.idea/modules/fabric/improvedmapcolors.fabric.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/neoforge/improvedmapcolors.neoforge.main.iml" filepath="$PROJECT_DIR$/.idea/modules/neoforge/improvedmapcolors.neoforge.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/neoforge/improvedmapcolors.neoforge.test.iml" filepath="$PROJECT_DIR$/.idea/modules/neoforge/improvedmapcolors.neoforge.test.iml" />
+    </modules>
+  </component>
+</project>

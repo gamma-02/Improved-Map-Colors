@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "improvedmapcolors",
+  "version": "${version}",
+  "name": "ImprovedMapColors",
+  "description": "",
+  "authors": [
+    ""
+  ],
+  "contact": {
+    "homepage": ""
+  },
+  "license": "MIT",
+  "icon": "assets/improvedmapcolors/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "org.gneisscode.improvedmapcolors.fabric.ImprovedMapColorsFabric"
+    ],
+    "client": [
+      "org.gneisscode.improvedmapcolors.fabric.client.ImprovedMapColorsFabricClient"
+    ],
+    "modmenu": [ "org.gneisscode.improvedmapcolors.fabric.compat.ModMenuApiImpl" ]
+
+  },
+  "mixins": [
+    "improvedmapcolors.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.17.2",
+    "minecraft": "~1.21.8",
+    "java": ">=21",
+    "architectury": ">=17.0.8",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  },
+  "accessWidener": "improvedmapcolors.accesswidener"
+}
