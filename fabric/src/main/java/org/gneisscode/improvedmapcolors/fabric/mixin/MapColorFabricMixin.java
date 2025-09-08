@@ -19,7 +19,7 @@ public class MapColorFabricMixin {
 
     @Inject(method = "<clinit>", at = @At("HEAD"))
     private static void loadedNow(CallbackInfo ci){
-        LogUtils.getLogger().info("Fabric Map Color clinit!");
+//        LogUtils.getLogger().info("Fabric Map Color clinit!");
 //        ImprovedMapColorsFabric.init();
 //        if(!CommonConfig.CONFIG_SPEC.isLoaded()){
 //            ((ConfigTrackerAccessor)ConfigTracker.INSTANCE).openConfigAccessor(((ConfigTrackerAccessor)ConfigTracker.INSTANCE).getConfig("improvedmapcolors"), FabricLoader.getInstance().getConfigDir(), null);

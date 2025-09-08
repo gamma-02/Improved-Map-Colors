@@ -6,7 +6,14 @@
   "improvedmapcolors.configuration.title": "Improved Map Colors Configuration",
   "improvedmapcolors.configuration.color_file.tooltip": "Path to a CSV list of files like: |hex color|[optional id]|\nIf no ID is supplied, the id will be the column number in the file",
   "improvedmapcolors.configuration.colorlist.tooltip": "List of colors to replace vanilla map colors, defaulting to Vanilla colors (gneiss colors)",
-  "improvedmapcolors.configuration.section.improvedmapcolors.startup.toml": "Improved Map Colors Configuration",
-  "improvedmapcolors.configuration.section.improvedmapcolors.startup.toml.title": "Improved Map Colors Configuration",
-  "improvedmapcolors.configuration.colorlist.button": "Edit..."
+  "improvedmapcolors.configuration.section.improvedmapcolors.common.toml": "Improved Map Colors Configuration",
+  "improvedmapcolors.configuration.section.improvedmapcolors.common.toml.title": "Improved Map Colors Configuration",
+  "improvedmapcolors.configuration.colorlist.button": "Edit",
+  "improvedmapcolors.configuration.use_blockstate_file": "",
+  "improvedmapcolors.configuration.blockstate_file": "",
+  "improvedmapcolors.configuration.state_list": "",
+  "improvedmapcolors.configuration.state_list.button": "",
+  "improvedmapcolors.configuration.state_list.tooltip": "",
+  "improvedmapcolors.configuration.use_blockstate_file.tooltip": "",
+  "improvedmapcolors.configuration.blockstate_file.tooltip": ""
 }
