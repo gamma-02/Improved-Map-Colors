@@ -45,6 +45,9 @@ subprojects {
     dependencies {
         minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
         mappings loom.officialMojangMappings()
+
+        // https://mvnrepository.com/artifact/com.opencsv/opencsv
+        implementation 'com.opencsv:opencsv:5.12.0'
     }
 
     java {

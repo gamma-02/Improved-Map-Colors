@@ -1,8 +1,14 @@
 package org.gneisscode.improvedmapcolors;
 
+import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.collect.Lists;
+import com.mojang.logging.LogUtils;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,12 +22,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class CommonConfig /*extends MidnightConfig*/ {
 
@@ -33,27 +41,54 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
         configColorList = builder
                 .comment("List of colors to replace vanilla map colors, defaulting to Vanilla colors (gneiss colors)")
-                .defineList("colorlist", defaultColorList, () -> new String(), CommonConfig::validateColor);
+                .defineList("colorlist", defaultColorList, String::new, CommonConfig::validateColor);
 
-        useFile = builder.comment("Use a list of colors from the CSV defined below").define("use_file", false);
+//        useFile = builder.comment("Use a list of colors from the CSV defined below").define("use_file", false);
+
+        colorConfigMode = builder.comment("What mode to use when loading color values")
+                .comment("Config values will override a datapack, and CSV values will override both datapacks and the config")
+                .defineEnum("colorConfigMode",
+                ConfigMode.CONFIG_DATAPACK,
+                EnumGetMethod.NAME_IGNORECASE,
+                Lists.newArrayList(
+                        ConfigMode.CONFIG_DATAPACK,
+                        ConfigMode.ALL,
+                        ConfigMode.CONFIG,
+                        ConfigMode.DATAPACK,
+                        ConfigMode.CSV_FILE
+                        ));
 
         colorCsvPath = builder
-                .comment("Path to a CSV list of files like: |hex color|[optional id]|")
+                .comment("Path to a CSV list of colors like: |hex color|[optional id]|")
                 .comment("If no ID is supplied, the id will be the column number in the file")
                 .define("color_file", "", CommonConfig::fileValidator);
 
         configBlockStateList = builder
                 .comment("List of BlockStates:ColorID to change from Vanilla BlockStates (will default to Gneiss states)")
-                .defineList("state_list", defaultStateList, () -> new String(), CommonConfig::validateBlockStateListEntry);
+                .defineList("state_list", defaultStateList, String::new, CommonConfig::validateBlockStateListEntry);
 
-        useBlockStateFile = builder
-                .comment("Use a list of BlockStates and colorIDs from the CSV defined below")
-                .define("use_blockstate_file", false);
+//        useBlockStateFile = builder
+//                .comment("Use a list of BlockStates and colorIDs from the CSV defined below")
+//                .define("use_blockstate_file", false);
+
+        statesConfigMode = builder.comment("What mode to use when loading BlockState values")
+                .comment("On conflicts, config values will override datapacks', and CSV values will override both datapacks and the config")
+                .defineEnum("statesConfigMode",
+                        ConfigMode.CONFIG_DATAPACK,
+                        EnumGetMethod.NAME_IGNORECASE,
+                        Lists.newArrayList(
+                                ConfigMode.CONFIG_DATAPACK,
+                                ConfigMode.ALL,
+                                ConfigMode.CONFIG,
+                                ConfigMode.DATAPACK,
+                                ConfigMode.CSV_FILE
+                        ));
+
 
         blockStateCsvPath = builder
-                .comment("Path to a CSV list of files like:")
-                .comment("|BlockID[statedata|colorID<required>| OR:")
-                .comment("|BlockID|statedata|colorID<required>|")
+                .comment("Path to a CSV list of states like:")
+                .comment("|BlockID[statedata]|colorID<required>| OR:")
+                .comment("|BlockID|[statedata]|colorID<required>|")
                 .define("blockstate_file", "", CommonConfig::fileValidator);
 
 
@@ -63,19 +98,35 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
     //colors!
     public final ModConfigSpec.ConfigValue<List<? extends String>> configColorList;
-    public final ModConfigSpec.BooleanValue useFile;
+//    public final ModConfigSpec.BooleanValue useFile;
+    public final ModConfigSpec.EnumValue<ConfigMode> colorConfigMode;
     public final ModConfigSpec.ConfigValue<String> colorCsvPath;
     public List<Color> indexIdColorList;
 
     //block states!
     public final ModConfigSpec.ConfigValue<List<? extends String>> configBlockStateList;
-    public final ModConfigSpec.BooleanValue useBlockStateFile;
+//    public final ModConfigSpec.BooleanValue useBlockStateFile;
+    public final ModConfigSpec.EnumValue<ConfigMode> statesConfigMode;
     public final ModConfigSpec.ConfigValue<String> blockStateCsvPath;
     public HashMap<BlockState, Integer> blockStateIdMap;
-    public HashMap<BlockState, List<Pair<String, String>>> valueStateMap = new HashMap<>();
+    public HashMap<BlockState, List<String>> valueStateMap = new HashMap<>();
 
     //todo: add a few examples and tests
-    public static final ArrayList<String> defaultStateList = Lists.newArrayList();
+    public static final ArrayList<String> defaultStateList = Lists.newArrayList(
+            "minecraft:poppy:28",
+            "allium:16",
+            "azure_bluet:2",
+            "blue_orchid:17",
+            "dandelion:18",
+            "lily_of_the_valley:8",
+            "oxeye_daisy:14",
+            "torchflower:40",
+            "orange_tulip:15",
+            "red_tulip:52",
+            "white_tulip:22",
+            "pink_tulip:16",
+            "wither_rose:21"
+    );
 
     //todo: move out of the way asap
     public static final ArrayList<String> defaultColorList = Lists.newArrayList(
@@ -189,13 +240,13 @@ public class CommonConfig /*extends MidnightConfig*/ {
     }
 
     public static boolean validateBlockStateListEntry(Object o){
-//        if(!(o instanceof String s)){
-//            return false;
-//        }
-//
-//        if(!s.contains(":")){
-//            return false;
-//        }
+        if (!(o instanceof String s)) {
+            return false;
+        }
+
+        if (!s.contains(":")) {
+            return false;
+        }
 //
 //        String[] split = s.split(":");
 //
@@ -221,12 +272,72 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
 
     public static void initIndexIdColorList() {
-        if(CommonConfig.CONFIG.useFile.get()){
+        if((CommonConfig.CONFIG.statesConfigMode.get().mode & 4) != 0 && ((CommonConfig.CONFIG.statesConfigMode.get().mode & 1) == 0)){
             //todo: handle using the file and committing that to the list
             CommonConfig.CONFIG.indexIdColorList = new ArrayList<>();
+
+            loadColorListCSV();
         }else{
             CommonConfig.CONFIG.indexIdColorList = CommonConfig.CONFIG.configColorList.get().stream().map(Color::decode).toList();
         }
+
+
+    }
+
+    public static void loadColorListCSV(){
+        Path p = null;
+        try {
+            p = Paths.get(CONFIG.colorCsvPath.get());
+        } catch (InvalidPathException | NullPointerException ex) {
+            return;
+        }
+
+        File f = p.toFile();
+
+        Reader reader = null;
+        try {
+            reader = Files.newBufferedReader(p);
+        } catch (IOException e) {
+            LogUtils.getLogger().error("CSV could not be found!");
+            return;
+        }
+
+        CSVReader csvReader = new CSVReader(reader);
+
+        List<String[]> entries = null;
+        try {
+            entries = csvReader.readAll();
+        } catch (IOException | CsvException e) {
+            LogUtils.getLogger().error("CSV Could not be read!");
+            throw new RuntimeException(e);
+        }
+
+
+        for(int i = 0; i < entries.size(); i++){
+            String[] entry = entries.get(i);
+
+            Color c = null;
+
+            try{
+                c = Color.decode(entry[0]);
+            }catch( NumberFormatException nfe){
+                continue;
+            }
+
+            if(entry.length == 1){
+                CONFIG.indexIdColorList.set(i, c);
+            }else{
+                try{
+                    CONFIG.indexIdColorList.set(Integer.parseInt(entry[1]), c);
+                }catch (NumberFormatException nfe){
+                    continue;
+                }
+            }
+        }
+
+
+
+
 
 
     }
@@ -242,17 +353,29 @@ public class CommonConfig /*extends MidnightConfig*/ {
     }
 
     public static void loadBlockStateList() {
-        if(CommonConfig.CONFIG.useBlockStateFile.get()){
-            //todo: handle using the file and committing that to the list
-            CommonConfig.CONFIG.blockStateIdMap = new HashMap<>();
+        if((CommonConfig.CONFIG.statesConfigMode.get().mode & 4) != 0 && ((CommonConfig.CONFIG.statesConfigMode.get().mode & 1) == 0)){
+
+            parseBlockStateDataCSV();
+
             return;
         }
 
+
+
+
+
         HashMap<BlockState, Integer> stateColorMap = new HashMap<>();
-        HashMap<BlockState, List<Pair<String, String>>> statePropertyStringMap = new HashMap<>();
+        HashMap<BlockState, List<String>> statePropertyStringMap = new HashMap<>();
 
         for(String s : CommonConfig.CONFIG.configBlockStateList.get()){
+
+            if(s.isEmpty()) continue;
+
             String[] split = s.split(":");
+
+            if(split.length < 2){
+                continue;
+            }
 
             boolean hasNamespace = split.length == 3;
 
@@ -261,10 +384,10 @@ public class CommonConfig /*extends MidnightConfig*/ {
                     : Integer.parseInt(split[1]);
 
             String[] pathAndState = (hasNamespace ? split[1] : split[0]).split("\\[");
-            String blockStateData = pathAndState.length < 2 ? null : pathAndState[1].replace("\\]", "");
+            String blockStateData = pathAndState.length < 2 ? null : pathAndState[1].replace("]", "");
             String path = pathAndState[0];
 
-            ArrayList<Pair<String, String>> stateStrings = new ArrayList<>();
+            ArrayList<String> stateStrings = new ArrayList<>();
 
             BlockState state = parseBlockStateData(blockStateData, path, hasNamespace ? split[0] : null, stateStrings);
 
@@ -282,8 +405,97 @@ public class CommonConfig /*extends MidnightConfig*/ {
         CONFIG.blockStateIdMap = stateColorMap;
     }
 
+    private static void parseBlockStateDataCSV() {
+
+        Path p = null;
+        try {
+            p = Paths.get(CONFIG.blockStateCsvPath.get());
+        } catch (InvalidPathException | NullPointerException ex) {
+            return;
+        }
+
+        File f = p.toFile();
+
+        Reader reader = null;
+        try {
+            reader = Files.newBufferedReader(p);
+        } catch (IOException e) {
+            LogUtils.getLogger().error("CSV Path could not be found!");
+            return;
+        }
+
+        CSVReader csvReader = new CSVReader(reader);
+
+        List<String[]> entries = null;
+        try {
+            entries = csvReader.readAll();
+        } catch (IOException | CsvException e) {
+            LogUtils.getLogger().error("CSV Could not be read!");
+            throw new RuntimeException(e);
+        }
+
+        HashMap<BlockState, Integer> stateColorMap = new HashMap<>();
+        HashMap<BlockState, List<String>> statePropertyStringMap = new HashMap<>();
+
+
+        for(String[] entry : entries){
+            var id = entry[0];
+            //has namespace
+            String path = null;
+            String namespace = null;
+            if(id.contains(":")){
+                namespace = id.split(":")[0];
+                path = id.split(":")[1];
+            }else{
+                path = id;
+            }
+
+            //state data baked in to the id
+            String blockStateData = null;
+            if(entry.length == 2){
+                String[] pathAndState = (path).split("\\[");
+                blockStateData = pathAndState.length < 2 ? null : pathAndState[1].replace("]", "");
+                path = pathAndState[0];
+
+                //state data seperate from the id
+            }else if(entry.length == 3){
+
+                blockStateData = entry[1].replace("[", "").replace("]", "");
+
+            }else{//malformed. do not process
+                continue;
+            }
+
+            var stateStrings = new ArrayList<String>();
+
+            BlockState state = parseBlockStateData(blockStateData, path, namespace, stateStrings);
+
+            if(state.getBlock() == Blocks.AIR && !path.contains("air")){
+                continue;
+            }
+
+            int colorID;
+            try{
+                colorID = Integer.parseInt(entry.length == 2 ? entry[1] : entry[2]);
+            } catch (NumberFormatException e) {
+                LogUtils.getLogger().error("colorID in state CSV Malformed!");
+                continue;
+            }
+
+            stateColorMap.put(state, colorID);
+            statePropertyStringMap.put(state, stateStrings);
+
+        }
+
+        CONFIG.valueStateMap = statePropertyStringMap;
+        CONFIG.blockStateIdMap = stateColorMap;
+
+
+
+    }
+
     @NotNull
-    public static BlockState parseBlockStateData(@Nullable String blockStateData, String path, @Nullable String namespace, ArrayList<Pair<String, String>> stateStrings){
+    public static BlockState parseBlockStateData(@Nullable String blockStateData, String path, @Nullable String namespace, ArrayList<String> stateStrings){
         boolean hasNamespace = namespace != null;
 
         ResourceLocation ownerID = hasNamespace
@@ -295,6 +507,8 @@ public class CommonConfig /*extends MidnightConfig*/ {
         if(owner == Blocks.AIR || blockStateData == null){
             return owner.defaultBlockState();
         }
+
+
 
         String[] states = blockStateData.split(",");
 
@@ -313,7 +527,7 @@ public class CommonConfig /*extends MidnightConfig*/ {
             }
 
             defaultState = setProperty(defaultState, prop, value);
-            stateStrings.add(Pair.of(name, value));
+            stateStrings.add(name);//add this name as something to override the default blockstate
 
         }
 
@@ -341,32 +555,21 @@ public class CommonConfig /*extends MidnightConfig*/ {
         HashMap<Property<?>, Boolean> hasProperty = new HashMap<>();
         Block owner = instance.getBlock();
         BlockState defaultState = owner.defaultBlockState();
-
-
-
-
-//        int properties = 0;
-        for(Property<?> p : instance.getProperties()){
-            if(instance.getValue(p).equals(defaultState.getValue(p))){
-                hasProperty.put(p, false);
-            }else{
-                hasProperty.put(p, true);
-//                properties++;
-            }
+        if(instance.equals(defaultState) && CONFIG.valueStateMap.containsKey(defaultState)){
+            populateHasPropertyMapFromValueStateMap(defaultState, CONFIG.valueStateMap.get(defaultState), hasProperty);
+        }else {
+            populateHasPropertyMap(instance, defaultState, hasProperty);
         }
 
         if(hasProperty.values().stream().noneMatch((b) -> b)){
-            if(instance.getProperties().contains(BlockStateProperties.BED_PART) && instance.getValue(BlockStateProperties.BED_PART).equals(BedPart.FOOT) && instance.getBlock() == Blocks.BLACK_BED){
-                System.out.println("Foot Bed Part!");
 
-            }
             return CommonConfig.CONFIG.blockStateIdMap.getOrDefault(defaultState, -1);
         }
 
         //the issue with this bit is that it's overriding other block states
         //so we should maintain a list of what matches
         //and then filter it?
-        //this problem ^^ is hard
+        //this problem (^w^) is hard
 
 
         ArrayList<BlockState> stateMatches = collectStateMatches(instance, keys, owner, hasProperty);
@@ -375,7 +578,32 @@ public class CommonConfig /*extends MidnightConfig*/ {
             return -1;
 
         stateMatches.sort(CommonConfig::compareStateValues);
-        return CommonConfig.CONFIG.blockStateIdMap.getOrDefault(stateMatches.getLast(), -1);
+
+        if(owner == Blocks.BLACK_BED && instance.getValue(BlockStateProperties.BED_PART) == BedPart.FOOT && instance.getValue(BedBlock.FACING) == Direction.SOUTH){
+            ImprovedMapColors.init();
+        }
+
+        return CommonConfig.CONFIG.blockStateIdMap.getOrDefault(stateMatches.getFirst(), -1);
+    }
+
+    private static void populateHasPropertyMapFromValueStateMap(BlockState defaultState, List<String> strings, HashMap<Property<?>, Boolean> hasProperty) {
+        for(Property<?> p : defaultState.getProperties()){
+            if(strings.contains(p.getName())){
+                hasProperty.put(p, true);
+            } else {
+                hasProperty.put(p, false);
+            }
+        }
+    }
+
+    private static void populateHasPropertyMap(BlockState instance, BlockState defaultState, HashMap<Property<?>, Boolean> hasProperty) {
+        for (Property<?> p : instance.getProperties()) {
+            if (instance.getValue(p).equals(defaultState.getValue(p))) {
+                hasProperty.put(p, false);
+            } else {
+                hasProperty.put(p, true);
+            }
+        }
     }
 
     private static ArrayList<BlockState> collectStateMatches(BlockState instance, Set<BlockState> keys, Block owner, HashMap<Property<?>, Boolean> hasProperty) {
@@ -383,14 +611,20 @@ public class CommonConfig /*extends MidnightConfig*/ {
         for(BlockState state : keys){
             if(state.getBlock() != owner) continue;
 
+            List<String> definedStateProperties = CONFIG.valueStateMap.get(state);
+
             boolean matches = true;
 
             for(Property<?> otherP : state.getProperties()){
+
                 if(!hasProperty.containsKey(otherP)){
                     continue;//we can filter for specific states later
                 }
 
-                if(!state.getValue(otherP).equals(instance.getValue(otherP))){
+                if(
+                        !state.getValue(otherP).equals(instance.getValue(otherP))
+                        && definedStateProperties.contains(otherP.getName())
+                ){
                     matches = false;
                 }
 
@@ -400,6 +634,7 @@ public class CommonConfig /*extends MidnightConfig*/ {
                 stateMatches.add(state);
             }
         }
+
         return stateMatches;
     }
 
@@ -423,10 +658,31 @@ public class CommonConfig /*extends MidnightConfig*/ {
         return Integer.compare(state1Changed, state2Changed);
     }
 
-//    public static enum configMode{
-//        MOD_TOML,
-//        DATAPACK,
-//        CSV_FILE
-//    }
+    /**
+     * bit structure:<br>
+     * 0b <br>
+     * x config lists (GUI)<br>
+     * x datapack<br>
+     * x CSV file<br>
+     * * empty<br>
+     * *<br>
+     * *<br>
+     * *<br>
+     * *
+     */
+    public static enum ConfigMode{
+        CONFIG(1), //2
+        DATAPACK(2), //3
+        CSV_FILE(4), //4
+        CONFIG_DATAPACK(3), // default
+        CONFIG_CSV(5),
+        CSV_DATAPACK(6),//why
+        ALL(7); //1
+
+        public final byte mode;
+        ConfigMode(int fileFlag){
+            mode = (byte) fileFlag;
+        }
+    }
 
 }
