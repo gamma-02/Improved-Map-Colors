@@ -18,8 +18,8 @@
   "improvedmapcolors.configuration.blockstate_file.tooltip": "Path to a CSV list of files like: \n|BlockID[statedata]|colorID<required>| OR:\n|BlockID|[statedata]|colorID<required>|",
   "improvedmapcolors.configuration.statesConfigMode": "BlockStates Config Mode",
   "improvedmapcolors.configuration.colorConfigMode": "Colors Config Mode",
-  "improvedmapcolors.configuration.colorConfigMode.tooltip": "What mode to use when loading color values\nOn conflicts, config values will override a datapack, and CSV values will override both datapacks and the config",
-  "improvedmapcolors.configuration.statesConfigMode.tooltip": "What mode to use when loading BlockState values\nOn conflicts, config values will override datapacks', and CSV values will override both datapacks and the config",
+  "improvedmapcolors.configuration.colorConfigMode.tooltip": "What mode to use when loading color values\nOn conflicts, datapack values will override the config, and CSV values will override both datapacks and the config",
+  "improvedmapcolors.configuration.statesConfigMode.tooltip": "What mode to use when loading BlockState values\nOn conflicts, datapack values will override the config', and CSV values will override both datapacks and the config",
 
   "item.improvedmapcolors.map_block_item": "Map Color Block Item",
   "item.improvedmapcolors.map_block_item.tooltip": "%s and %s + %s to tune map color values",

@@ -265,7 +265,7 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
     public static void initIndexIdColorList() {
         if(CommonConfig.CONFIG.colorConfigMode.get().hasCSV() && !CommonConfig.CONFIG.statesConfigMode.get().hasModConfig()){
-            //todo: handle using the file and committing that to the list
+
             ImprovedMapColors.indexIdColorList = new ArrayList<>();
 
             loadColorListCSV();
@@ -320,9 +320,10 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
             try{
                 c = Color.decode(entry[0]);
-            }catch( NumberFormatException nfe){
+            }catch(NumberFormatException ignored){
                 continue;
             }
+
 
             if(entry.length == 1){
                 ImprovedMapColors.indexIdColorList.set(i, c);

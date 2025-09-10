@@ -46,6 +46,7 @@ subprojects {
         minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
         mappings loom.officialMojangMappings()
 
+//        implementation 'com.opencsv:opencsv:5.12.0'
     }
 
     java {
