@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "improvedmapcolors:block/map_color_block"
+    }
+  }
+}

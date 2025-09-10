@@ -16,16 +16,16 @@ import java.util.function.Function;
 @Mixin(BlockBehaviour.Properties.class)
 public class BlockBehaviourPropertiesMixin {
 
-    @Shadow
-    private Function<BlockState, MapColor> mapColor;
+//    @Shadow
+//    private Function<BlockState, MapColor> mapColor;
 
-    @Inject(
-            method = "mapColor(Lnet/minecraft/world/item/DyeColor;)Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;",
-            at = @At("RETURN"),
-            cancellable = true
-    )
-    public void redirectMapDyeColor(DyeColor dyeColor, CallbackInfoReturnable<BlockBehaviour.Properties> cir){
+//    @Inject(
+//            method = "mapColor(Lnet/minecraft/world/item/DyeColor;)Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;",
+//            at = @At("RETURN"),
+//            cancellable = true
+//    )
+//    public void redirectMapDyeColor(DyeColor dyeColor, CallbackInfoReturnable<BlockBehaviour.Properties> cir){
 //        mapColor =
-    }
+//    }
 
 }

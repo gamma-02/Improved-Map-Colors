@@ -40,6 +40,12 @@ dependencies {
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
 
 //    runtimeOnly "fuzs.forgeconfigscreens:forgeconfigscreens-neoforge:${project.forge_config_version}"
+//    include 'com.opencsv:opencsv:5.12.0'
+//    implementation 'com.opencsv:opencsv:5.12.0'
+    common 'com.opencsv:opencsv:5.12.0'
+    shadowBundle 'com.opencsv:opencsv:5.12.0'
+//    additionalRuntimeClasspath 'com.opencsv:opencsv:5.12.0'
+
 
 }
 
@@ -59,3 +65,11 @@ shadowJar {
 remapJar {
     input.set shadowJar.archiveFile
 }
+
+//runs {
+//    configureEach {
+//        dependencies {
+//            runtime 'com.example:example:1.0'
+//        }
+//    }
+//}

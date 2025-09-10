@@ -21,7 +21,6 @@
       "org.gneisscode.improvedmapcolors.fabric.client.ImprovedMapColorsFabricClient"
     ]
   },
-  "__comment": "    \"modmenu\": [ \"org.gneisscode.improvedmapcolors.fabric.compat.ModMenuApiImpl\" ]\n",
   "mixins": [
     "improvedmapcolors.mixins.json",
     "improvedmapcolorsfabric.mixins.json"
@@ -31,7 +30,8 @@
     "minecraft": "~1.21.8",
     "java": ">=21",
     "architectury": ">=17.0.8",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "forgeconfigapiport": ">=21.8.1"
   },
   "suggests": {
     "another-mod": "*"

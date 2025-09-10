@@ -5,15 +5,11 @@ import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BedPart;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -29,7 +25,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class CommonConfig /*extends MidnightConfig*/ {
 
@@ -101,15 +96,12 @@ public class CommonConfig /*extends MidnightConfig*/ {
 //    public final ModConfigSpec.BooleanValue useFile;
     public final ModConfigSpec.EnumValue<ConfigMode> colorConfigMode;
     public final ModConfigSpec.ConfigValue<String> colorCsvPath;
-    public List<Color> indexIdColorList;
 
     //block states!
     public final ModConfigSpec.ConfigValue<List<? extends String>> configBlockStateList;
 //    public final ModConfigSpec.BooleanValue useBlockStateFile;
     public final ModConfigSpec.EnumValue<ConfigMode> statesConfigMode;
     public final ModConfigSpec.ConfigValue<String> blockStateCsvPath;
-    public HashMap<BlockState, Integer> blockStateIdMap;
-    public HashMap<BlockState, List<String>> valueStateMap = new HashMap<>();
 
     //todo: add a few examples and tests
     public static final ArrayList<String> defaultStateList = Lists.newArrayList(
@@ -272,13 +264,21 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
 
     public static void initIndexIdColorList() {
-        if((CommonConfig.CONFIG.statesConfigMode.get().mode & 4) != 0 && ((CommonConfig.CONFIG.statesConfigMode.get().mode & 1) == 0)){
+        if(CommonConfig.CONFIG.colorConfigMode.get().hasCSV() && !CommonConfig.CONFIG.statesConfigMode.get().hasModConfig()){
             //todo: handle using the file and committing that to the list
-            CommonConfig.CONFIG.indexIdColorList = new ArrayList<>();
+            ImprovedMapColors.indexIdColorList = new ArrayList<>();
 
             loadColorListCSV();
+            return;
         }else{
-            CommonConfig.CONFIG.indexIdColorList = CommonConfig.CONFIG.configColorList.get().stream().map(Color::decode).toList();
+            ImprovedMapColors.indexIdColorList = CommonConfig.CONFIG.configColorList.get().stream().map(Color::decode).toList();
+        }
+
+        if(
+                CommonConfig.CONFIG.statesConfigMode.get().hasCSV() &&
+                CommonConfig.CONFIG.statesConfigMode.get().hasModConfig()
+        ){
+            loadColorListCSV();
         }
 
 
@@ -325,21 +325,15 @@ public class CommonConfig /*extends MidnightConfig*/ {
             }
 
             if(entry.length == 1){
-                CONFIG.indexIdColorList.set(i, c);
+                ImprovedMapColors.indexIdColorList.set(i, c);
             }else{
                 try{
-                    CONFIG.indexIdColorList.set(Integer.parseInt(entry[1]), c);
+                    ImprovedMapColors.indexIdColorList.set(Integer.parseInt(entry[1]), c);
                 }catch (NumberFormatException nfe){
                     continue;
                 }
             }
         }
-
-
-
-
-
-
     }
 
 
@@ -348,12 +342,15 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
         for(MapColor c : MapColor.MATERIAL_COLORS){
             if(c == null) continue;
-            c.col = CommonConfig.CONFIG.indexIdColorList.get(c.id).getRGB();
+            c.col = ImprovedMapColors.indexIdColorList.get(c.id).getRGB();
         }
     }
 
     public static void loadBlockStateList() {
-        if((CommonConfig.CONFIG.statesConfigMode.get().mode & 4) != 0 && ((CommonConfig.CONFIG.statesConfigMode.get().mode & 1) == 0)){
+        if(CommonConfig.CONFIG.statesConfigMode.get().hasCSV() && !CONFIG.statesConfigMode.get().hasModConfig()){
+
+            ImprovedMapColors.valueStateMap = new HashMap<>();
+            ImprovedMapColors.blockStateIdMap = new HashMap<>();
 
             parseBlockStateDataCSV();
 
@@ -401,8 +398,12 @@ public class CommonConfig /*extends MidnightConfig*/ {
         }
 
 
-        CONFIG.valueStateMap = statePropertyStringMap;
-        CONFIG.blockStateIdMap = stateColorMap;
+        ImprovedMapColors.valueStateMap = statePropertyStringMap;
+        ImprovedMapColors.blockStateIdMap = stateColorMap;
+
+        if(CONFIG.statesConfigMode.get().hasCSV() && CONFIG.statesConfigMode.get().hasModConfig()){
+            parseBlockStateDataCSV();
+        }
     }
 
     private static void parseBlockStateDataCSV() {
@@ -434,8 +435,9 @@ public class CommonConfig /*extends MidnightConfig*/ {
             throw new RuntimeException(e);
         }
 
-        HashMap<BlockState, Integer> stateColorMap = new HashMap<>();
-        HashMap<BlockState, List<String>> statePropertyStringMap = new HashMap<>();
+        HashMap<BlockState, Integer> stateColorMap = ImprovedMapColors.blockStateIdMap;
+        HashMap<BlockState, List<String>> statePropertyStringMap = ImprovedMapColors.valueStateMap;
+
 
 
         for(String[] entry : entries){
@@ -487,8 +489,8 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
         }
 
-        CONFIG.valueStateMap = statePropertyStringMap;
-        CONFIG.blockStateIdMap = stateColorMap;
+        ImprovedMapColors.valueStateMap = statePropertyStringMap;
+        ImprovedMapColors.blockStateIdMap = stateColorMap;
 
 
 
@@ -541,122 +543,6 @@ public class CommonConfig /*extends MidnightConfig*/ {
         return val.map(t -> state.setValue(property, t)).orElse(state);
     }
 
-    public static MapColor getMapColorFromBlockState(BlockState instance, MapColor m) {
-        int color = containsBlockState(instance);
-        if(color != -1){
-            m = MapColor.MATERIAL_COLORS[color];
-        }
-        return m;
-    }
-
-    public static int containsBlockState(BlockState instance){
-
-        Set<BlockState> keys = CommonConfig.CONFIG.blockStateIdMap.keySet();
-        HashMap<Property<?>, Boolean> hasProperty = new HashMap<>();
-        Block owner = instance.getBlock();
-        BlockState defaultState = owner.defaultBlockState();
-        if(instance.equals(defaultState) && CONFIG.valueStateMap.containsKey(defaultState)){
-            populateHasPropertyMapFromValueStateMap(defaultState, CONFIG.valueStateMap.get(defaultState), hasProperty);
-        }else {
-            populateHasPropertyMap(instance, defaultState, hasProperty);
-        }
-
-        if(hasProperty.values().stream().noneMatch((b) -> b)){
-
-            return CommonConfig.CONFIG.blockStateIdMap.getOrDefault(defaultState, -1);
-        }
-
-        //the issue with this bit is that it's overriding other block states
-        //so we should maintain a list of what matches
-        //and then filter it?
-        //this problem (^w^) is hard
-
-
-        ArrayList<BlockState> stateMatches = collectStateMatches(instance, keys, owner, hasProperty);
-
-        if(stateMatches.isEmpty())
-            return -1;
-
-        stateMatches.sort(CommonConfig::compareStateValues);
-
-        if(owner == Blocks.BLACK_BED && instance.getValue(BlockStateProperties.BED_PART) == BedPart.FOOT && instance.getValue(BedBlock.FACING) == Direction.SOUTH){
-            ImprovedMapColors.init();
-        }
-
-        return CommonConfig.CONFIG.blockStateIdMap.getOrDefault(stateMatches.getFirst(), -1);
-    }
-
-    private static void populateHasPropertyMapFromValueStateMap(BlockState defaultState, List<String> strings, HashMap<Property<?>, Boolean> hasProperty) {
-        for(Property<?> p : defaultState.getProperties()){
-            if(strings.contains(p.getName())){
-                hasProperty.put(p, true);
-            } else {
-                hasProperty.put(p, false);
-            }
-        }
-    }
-
-    private static void populateHasPropertyMap(BlockState instance, BlockState defaultState, HashMap<Property<?>, Boolean> hasProperty) {
-        for (Property<?> p : instance.getProperties()) {
-            if (instance.getValue(p).equals(defaultState.getValue(p))) {
-                hasProperty.put(p, false);
-            } else {
-                hasProperty.put(p, true);
-            }
-        }
-    }
-
-    private static ArrayList<BlockState> collectStateMatches(BlockState instance, Set<BlockState> keys, Block owner, HashMap<Property<?>, Boolean> hasProperty) {
-        ArrayList<BlockState> stateMatches = new ArrayList<>();
-        for(BlockState state : keys){
-            if(state.getBlock() != owner) continue;
-
-            List<String> definedStateProperties = CONFIG.valueStateMap.get(state);
-
-            boolean matches = true;
-
-            for(Property<?> otherP : state.getProperties()){
-
-                if(!hasProperty.containsKey(otherP)){
-                    continue;//we can filter for specific states later
-                }
-
-                if(
-                        !state.getValue(otherP).equals(instance.getValue(otherP))
-                        && definedStateProperties.contains(otherP.getName())
-                ){
-                    matches = false;
-                }
-
-            }
-
-            if(matches){
-                stateMatches.add(state);
-            }
-        }
-
-        return stateMatches;
-    }
-
-
-    public static int getNumChangedProperties(BlockState state){
-        BlockState defaultState = state.getBlock().defaultBlockState();
-        int numChanged = 0;
-        for(Property<?> p : state.getProperties()){
-            if(state.getValue(p).equals(defaultState.getValue(p))){
-                numChanged++;
-            }
-        }
-
-        return numChanged;
-    }
-
-    public static int compareStateValues(BlockState state1, BlockState state2){
-        int state1Changed = getNumChangedProperties(state1);
-        int state2Changed = getNumChangedProperties(state2);
-
-        return Integer.compare(state1Changed, state2Changed);
-    }
 
     /**
      * bit structure:<br>
@@ -682,6 +568,18 @@ public class CommonConfig /*extends MidnightConfig*/ {
         public final byte mode;
         ConfigMode(int fileFlag){
             mode = (byte) fileFlag;
+        }
+
+        public boolean hasCSV(){
+            return (this.mode & 4) == 4;
+        }
+
+        public boolean hasModConfig(){
+            return (this.mode & 1) == 1;
+        }
+
+        public boolean hasDatapack(){
+            return (this.mode & 2) == 2;
         }
     }
 

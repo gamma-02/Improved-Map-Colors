@@ -43,6 +43,8 @@ dependencies {
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${project.forge_config_version}"
     include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${project.forge_config_version}"
 
+    include 'com.opencsv:opencsv:5.12.0'
+    implementation 'com.opencsv:opencsv:5.12.0'
     // Fabric
 //    modLocalRuntime "fuzs.forgeconfigscreens:forgeconfigscreens-fabric:"
 

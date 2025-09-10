@@ -13,25 +13,17 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 @Mixin(MapColor.class)
 public class MapColorMixin {
 
-    @Inject(method = "<clinit>", at = @At("HEAD"))
-    private static void loadedNow(CallbackInfo ci){
-        LogUtils.getLogger().info("MapColor Common clinit");
-
-    }
-
-    @ModifyArgs(
-            method = "<clinit>",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/MapColor;<init>(II)V")
-    )
-    private static void injectNew(Args args){
-
-
-
-//        if(CommonConfig.CONFIG == null || CommonConfig.CONFIG.useFile.get()){
-//            return;
-//        }
+//    @Inject(method = "<clinit>", at = @At("HEAD"))
+//    private static void loadedNow(CallbackInfo ci){
+//        LogUtils.getLogger().info("MapColor Common clinit");
 //
-//        args.set(1, CommonConfig.CONFIG.indexIdColorList.get(args.get(0)).getRGB());
-
-    }
+//    }
+//
+//    @ModifyArgs(
+//            method = "<clinit>",
+//            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/MapColor;<init>(II)V")
+//    )
+//    private static void injectNew(Args args){
+//
+//    }
 }

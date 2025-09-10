@@ -7,7 +7,8 @@
   ],
   "mixins": [
     "JustLoadMyConfigAlready",
-    "MapColorFabricMixin"
+    "MapColorFabricMixin",
+    "RegisterServerReloadListeners"
   ],
   "injectors": {
     "defaultRequire": 1

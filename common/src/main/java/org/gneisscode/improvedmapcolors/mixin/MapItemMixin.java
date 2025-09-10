@@ -5,10 +5,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.gneisscode.improvedmapcolors.CommonConfig;
+import org.gneisscode.improvedmapcolors.ImprovedMapColors;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -27,7 +27,7 @@ public class MapItemMixin {
 
         MapColor m = null;
 
-        m = CommonConfig.getMapColorFromBlockState(instance, m);
+        m = ImprovedMapColors.getMapColorFromBlockState(instance, m);
 
         if(m != null){
             return m;
