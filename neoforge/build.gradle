@@ -22,6 +22,10 @@ configurations {
         canBeResolved = true
         canBeConsumed = false
     }
+
+//    shadow {
+//        exclude 'org.apache.commons:commons-lang3:3.18.0'
+//    }
 }
 
 repositories {
@@ -43,7 +47,7 @@ dependencies {
 //    include 'com.opencsv:opencsv:5.12.0'
 //    implementation 'com.opencsv:opencsv:5.12.0'
     common 'com.opencsv:opencsv:5.12.0'
-    shadowBundle 'com.opencsv:opencsv:5.12.0'
+    include 'com.opencsv:opencsv:5.12.0'
 //    additionalRuntimeClasspath 'com.opencsv:opencsv:5.12.0'
 
 

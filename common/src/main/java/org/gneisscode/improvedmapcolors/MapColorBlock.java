@@ -42,7 +42,7 @@ public class MapColorBlock extends Block implements SimpleWaterloggedBlock {
 
     public MapColorBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState().setValue(MAP_COLOR, 1));
+        this.registerDefaultState(this.defaultBlockState().setValue(MAP_COLOR, 1).setValue(WATERLOGGED, false));
     }
 
     public static Function<BlockState, MapColor> getMapColorFunction(){

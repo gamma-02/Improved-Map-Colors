@@ -25,12 +25,12 @@ import static org.gneisscode.improvedmapcolors.ImprovedMapColors.MOD_ID;
 @Mod(MOD_ID)
 public final class ImprovedMapColorsNeoForge {
 
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.createBlocks(MOD_ID);
-
-    public static final DeferredHolder<Block, MapColorBlock> MAP_COLOR_BLOCK = BLOCKS.register(
-            "map_color_block",
-            (name) -> new MapColorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BARRIER).mapColor(MapColorBlock.getMapColorFunction()).setId(ResourceKey.create(Registries.BLOCK, name)))
-    );
+//    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.createBlocks(MOD_ID);
+//
+//    public static final DeferredHolder<Block, MapColorBlock> MAP_COLOR_BLOCK = BLOCKS.register(
+//            "map_color_block",
+//            (name) -> new MapColorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BARRIER).mapColor(MapColorBlock.getMapColorFunction()).setId(ResourceKey.create(Registries.BLOCK, name)))
+//    );
 
     public ImprovedMapColorsNeoForge(ModContainer container){
 
@@ -38,7 +38,7 @@ public final class ImprovedMapColorsNeoForge {
 
         ImprovedMapColors.init();
 
-        BLOCKS.register(container.getEventBus());
+//        BLOCKS.register(container.getEventBus());
 
     }
 }
