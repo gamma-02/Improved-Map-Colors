@@ -49,15 +49,13 @@ public class ColorListResourceReloadListener extends SimpleJsonResourceReloadLis
             Color configColor = ImprovedMapColors.indexIdColorList.get(i);
             MapColor c = MapColor.MATERIAL_COLORS[i];
 
-            if(configColor != null && datapackColor != null &&
+            if(configColor != null && datapackColor == null &&
                     CommonConfig.CONFIG.colorConfigMode.get().hasModConfig()
 
             ){
 
                 c.col = configColor.getRGB();
-            }else if(configColor == null && datapackColor != null
-                    && CommonConfig.CONFIG.colorConfigMode.get().hasModConfig()
-            ){
+            }else if(datapackColor != null){
                 c.col = datapackColor.getRGB();
             }
 
