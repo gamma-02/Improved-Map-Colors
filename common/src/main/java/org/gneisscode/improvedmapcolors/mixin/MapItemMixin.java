@@ -7,6 +7,7 @@ import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import org.gneisscode.improvedmapcolors.ColorStateMapManager;
 import org.gneisscode.improvedmapcolors.CommonConfig;
 import org.gneisscode.improvedmapcolors.ImprovedMapColors;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +28,7 @@ public class MapItemMixin {
 
         MapColor m = null;
 
-        m = ImprovedMapColors.getMapColorFromBlockState(instance, m);
+        m = ColorStateMapManager.getMapColorFromBlockState(instance, m);
 
         if(m != null){
             return m;

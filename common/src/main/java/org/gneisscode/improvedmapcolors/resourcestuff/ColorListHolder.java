@@ -15,8 +15,8 @@ public class ColorListHolder {
     public static Codec<ColorListHolder> COLOR_LIST_CODEC = RecordCodecBuilder.create(
             (instance) ->
                 instance.group(
-                        Codec.unboundedMap(Codec.INT, Codec.STRING).fieldOf("colorList").forGetter((f) -> {
-                            Map<Integer, String> colorMap = new HashMap<>();
+                        Codec.unboundedMap(Codec.STRING, Codec.STRING).fieldOf("colorList").forGetter((f) -> {
+                            Map<String, String> colorMap = new HashMap<>();
                             for(int i = 0; i < f.colorList.size(); i++){
                                 Color color = f.colorList.get(i);
 
@@ -24,7 +24,7 @@ public class ColorListHolder {
                                     continue;
                                 }
 
-                                colorMap.put(i, String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+                                colorMap.put(Integer.toString(i), String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                             }
                             return colorMap;
                         })
@@ -34,17 +34,17 @@ public class ColorListHolder {
 
     public List<Color> colorList;
 
-    public ColorListHolder(Map<Integer, String> colorIndexMap){
-        this.colorList = Lists.newArrayListWithCapacity(64);//should change when map format change
+    public ColorListHolder(Map<String, String> colorIndexMap){
+        this.colorList = Lists.newArrayListWithCapacity(64);//should change when map format changes
         for(int i = 0; i < 64; i++){
-            String s = colorIndexMap.get(i);
+            String s = colorIndexMap.get(Integer.toString(i));
             if(s == null){
-                this.colorList.set(i, null);
+                this.colorList.add(i, null);
                 continue;
             }
 
             try {
-                this.colorList.set(i, Color.decode(s));
+                this.colorList.add(i, Color.decode(s));
             } catch (NumberFormatException e) {
                 LogUtils.getLogger().error("Color unable to be read!");
             }

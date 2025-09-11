@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommonConfig /*extends MidnightConfig*/ {
 
@@ -202,6 +203,12 @@ public class CommonConfig /*extends MidnightConfig*/ {
         if(!(o instanceof String s)){
             return false;
         }
+
+        //null value -> use Vanilla colors
+        if(s.isEmpty()){
+            return true;
+        }
+
         try{
             Color c = Color.decode(s);
         }catch (NumberFormatException nfe){
@@ -227,7 +234,8 @@ public class CommonConfig /*extends MidnightConfig*/ {
         }
 
         File f = p.toFile();
-        //todo: add JSON compat -> get ready for allowing datapacks
+        //done: add JSON compat -> get ready for allowing datapacks
+        //used Codecs instead
         return f.exists() && f.isFile() && (s.endsWith(".csv") || s.endsWith(".json"));
     }
 
@@ -264,32 +272,43 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
 
     public static void initIndexIdColorList() {
-        if(CommonConfig.CONFIG.colorConfigMode.get().hasCSV() && !CommonConfig.CONFIG.statesConfigMode.get().hasModConfig()){
+        if(CONFIG.colorConfigMode.get().hasModConfig()) {
 
-            ImprovedMapColors.indexIdColorList = new ArrayList<>();
+            List<@Nullable Color> colorList = CONFIG.configColorList.get()
+                    .stream()
+                    .map((string) -> string.isEmpty() ? null : Color.decode(string))
+                    .collect(Collectors.toList());
 
-            loadColorListCSV();
-            return;
-        }else{
-            ImprovedMapColors.indexIdColorList = CommonConfig.CONFIG.configColorList.get().stream().map(Color::decode).toList();
+            int offset = colorList.size();
+            int runs = MapColor.MATERIAL_COLORS.length - colorList.size();
+            for (int i = 0; i < runs; i++) {
+                colorList.add(offset + i, null);
+            }
+
+            ColorListManager.setConfigColorList(colorList);
+
         }
 
-        if(
-                CommonConfig.CONFIG.statesConfigMode.get().hasCSV() &&
-                CommonConfig.CONFIG.statesConfigMode.get().hasModConfig()
-        ){
-            loadColorListCSV();
+        if(CONFIG.colorConfigMode.get().hasCSV()){
+            List<@Nullable Color> overrideList = loadColorListCSV();
+
+            ColorListManager.setOverridingColorList(overrideList);
         }
 
 
     }
 
-    public static void loadColorListCSV(){
+    /**
+     *
+     * @return null if loading the CSV failed, contents of the CSV in a list otherwise
+     */
+    @Nullable
+    public static List<@Nullable Color> loadColorListCSV(){
         Path p = null;
         try {
             p = Paths.get(CONFIG.colorCsvPath.get());
         } catch (InvalidPathException | NullPointerException ex) {
-            return;
+            return null;
         }
 
         File f = p.toFile();
@@ -299,7 +318,7 @@ public class CommonConfig /*extends MidnightConfig*/ {
             reader = Files.newBufferedReader(p);
         } catch (IOException e) {
             LogUtils.getLogger().error("CSV could not be found!");
-            return;
+            return null;
         }
 
         CSVReader csvReader = new CSVReader(reader);
@@ -309,7 +328,12 @@ public class CommonConfig /*extends MidnightConfig*/ {
             entries = csvReader.readAll();
         } catch (IOException | CsvException e) {
             LogUtils.getLogger().error("CSV Could not be read!");
-            throw new RuntimeException(e);
+            return null;
+        }
+
+        List<@Nullable Color> colors = new ArrayList<>(MapColor.MATERIAL_COLORS.length);
+        for(int i = 0; i < MapColor.MATERIAL_COLORS.length; i++){
+            colors.add(null);
         }
 
 
@@ -326,44 +350,41 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
 
             if(entry.length == 1){
-                ImprovedMapColors.indexIdColorList.set(i, c);
+                colors.set(i, c);
             }else{
                 try{
-                    ImprovedMapColors.indexIdColorList.set(Integer.parseInt(entry[1]), c);
-                }catch (NumberFormatException nfe){
-                    continue;
+                    colors.set(Integer.parseInt(entry[1]), c);
+                }catch (NumberFormatException nfe) {
+                    colors.set(i, c);
                 }
             }
         }
+
+        return colors;
     }
 
 
     public static void loadColorList() {
         CommonConfig.initIndexIdColorList();
 
-        for(MapColor c : MapColor.MATERIAL_COLORS){
-            if(c == null) continue;
-            c.col = ImprovedMapColors.indexIdColorList.get(c.id).getRGB();
-        }
+//        ColorListManager.reloadMapColorList();
     }
 
     public static void loadBlockStateList() {
-        if(CommonConfig.CONFIG.statesConfigMode.get().hasCSV() && !CONFIG.statesConfigMode.get().hasModConfig()){
-
-            ImprovedMapColors.valueStateMap = new HashMap<>();
-            ImprovedMapColors.blockStateIdMap = new HashMap<>();
-
-            parseBlockStateDataCSV();
-
-            return;
-        }
+        if(CommonConfig.CONFIG.statesConfigMode.get().hasCSV())
+            ColorStateMapManager.setOverridingStateTrackerMap(parseBlockStateDataCSV());
 
 
+        if(CommonConfig.CONFIG.statesConfigMode.get().hasModConfig())
+            ColorStateMapManager.setConfigStateTrackerMap(loadBlockStateListFromConfig());
 
 
+    }
 
-        HashMap<BlockState, Integer> stateColorMap = new HashMap<>();
-        HashMap<BlockState, List<String>> statePropertyStringMap = new HashMap<>();
+
+    @NotNull
+    public static Map<BlockState, ColorStateMapManager.BlockStatePropertyTracker> loadBlockStateListFromConfig() {
+        HashMap<BlockState, ColorStateMapManager.BlockStatePropertyTracker> stateColorMap = new HashMap<>();
 
         for(String s : CommonConfig.CONFIG.configBlockStateList.get()){
 
@@ -377,9 +398,17 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
             boolean hasNamespace = split.length == 3;
 
-            int colorID = hasNamespace
-                    ? Integer.parseInt(split[2])
-                    : Integer.parseInt(split[1]);
+            int colorID = -1;
+
+            try {
+                 colorID = hasNamespace
+                        ? Integer.parseInt(split[2])
+                        : Integer.parseInt(split[1]);
+            }catch (NumberFormatException nfe){
+                //invalid colorID
+                LogUtils.getLogger().error(nfe.getLocalizedMessage());
+                continue;
+            }
 
             String[] pathAndState = (hasNamespace ? split[1] : split[0]).split("\\[");
             String blockStateData = pathAndState.length < 2 ? null : pathAndState[1].replace("]", "");
@@ -393,27 +422,28 @@ public class CommonConfig /*extends MidnightConfig*/ {
                 continue;
             }
 
-            stateColorMap.put(state, colorID);
-            statePropertyStringMap.put(state, stateStrings);
+            stateColorMap.put(state, new ColorStateMapManager.BlockStatePropertyTracker(
+                    state,
+                    colorID,
+                    stateStrings
+            ));
+//            statePropertyStringMap.put(state, stateStrings);
 
         }
 
 
-        ImprovedMapColors.valueStateMap = statePropertyStringMap;
-        ImprovedMapColors.blockStateIdMap = stateColorMap;
-
-        if(CONFIG.statesConfigMode.get().hasCSV() && CONFIG.statesConfigMode.get().hasModConfig()){
-            parseBlockStateDataCSV();
-        }
+        return stateColorMap;
     }
 
-    private static void parseBlockStateDataCSV() {
+    @Nullable
+    public static Map<BlockState, ColorStateMapManager.@NotNull BlockStatePropertyTracker> parseBlockStateDataCSV() {
 
         Path p = null;
         try {
             p = Paths.get(CONFIG.blockStateCsvPath.get());
         } catch (InvalidPathException | NullPointerException ex) {
-            return;
+            LogUtils.getLogger().error("CSV State Path invalid!");
+            return null;
         }
 
         File f = p.toFile();
@@ -422,8 +452,8 @@ public class CommonConfig /*extends MidnightConfig*/ {
         try {
             reader = Files.newBufferedReader(p);
         } catch (IOException e) {
-            LogUtils.getLogger().error("CSV Path could not be found!");
-            return;
+            LogUtils.getLogger().error("CSV State File could not be found!");
+            return null;
         }
 
         CSVReader csvReader = new CSVReader(reader);
@@ -432,17 +462,18 @@ public class CommonConfig /*extends MidnightConfig*/ {
         try {
             entries = csvReader.readAll();
         } catch (IOException | CsvException e) {
-            LogUtils.getLogger().error("CSV Could not be read!");
-            throw new RuntimeException(e);
+            LogUtils.getLogger().error("CSV State File could not be read!");
+            return null;
         }
 
-        HashMap<BlockState, Integer> stateColorMap = ImprovedMapColors.blockStateIdMap;
-        HashMap<BlockState, List<String>> statePropertyStringMap = ImprovedMapColors.valueStateMap;
+        HashMap<BlockState, ColorStateMapManager.BlockStatePropertyTracker> stateColorMap = new HashMap<>();
 
 
 
         for(String[] entry : entries){
             var id = entry[0];
+
+            int realLength = Math.toIntExact(Arrays.stream(entry).filter((s) -> !s.isEmpty()).count());
             //has namespace
             String path = null;
             String namespace = null;
@@ -455,13 +486,13 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
             //state data baked in to the id
             String blockStateData = null;
-            if(entry.length == 2){
+            if(realLength == 2){
                 String[] pathAndState = (path).split("\\[");
                 blockStateData = pathAndState.length < 2 ? null : pathAndState[1].replace("]", "");
                 path = pathAndState[0];
 
                 //state data seperate from the id
-            }else if(entry.length == 3){
+            }else if(realLength == 3){
 
                 blockStateData = entry[1].replace("[", "").replace("]", "");
 
@@ -479,19 +510,24 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
             int colorID;
             try{
-                colorID = Integer.parseInt(entry.length == 2 ? entry[1] : entry[2]);
+                colorID = Integer.parseInt(realLength == 2 ? entry[1] : entry[2]);
             } catch (NumberFormatException e) {
                 LogUtils.getLogger().error("colorID in state CSV Malformed!");
                 continue;
             }
 
-            stateColorMap.put(state, colorID);
-            statePropertyStringMap.put(state, stateStrings);
+            stateColorMap.put(state, new ColorStateMapManager.BlockStatePropertyTracker(
+                    state,
+                    colorID,
+                    stateStrings
+            ));
 
         }
 
-        ImprovedMapColors.valueStateMap = statePropertyStringMap;
-        ImprovedMapColors.blockStateIdMap = stateColorMap;
+//        ImprovedMapColors.valueStateMap = statePropertyStringMap;
+//        ImprovedMapColors.blockStateIdMap = stateColorMap;
+
+        return stateColorMap;
 
 
 
@@ -544,6 +580,14 @@ public class CommonConfig /*extends MidnightConfig*/ {
         return val.map(t -> state.setValue(property, t)).orElse(state);
     }
 
+    public static void reloadConfig() {
+        LogUtils.getLogger().info("Reloading Config!");
+
+        CommonConfig.loadColorList();
+
+        CommonConfig.loadBlockStateList();
+    }
+
 
     /**
      * bit structure:<br>
@@ -581,6 +625,10 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
         public boolean hasDatapack(){
             return (this.mode & 2) == 2;
+        }
+
+        public boolean hasModConfigOrCSV() {
+            return (this.mode & 6) != 0;
         }
     }
 

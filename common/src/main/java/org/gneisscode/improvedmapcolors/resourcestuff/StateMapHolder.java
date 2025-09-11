@@ -10,6 +10,9 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import org.apache.commons.compress.utils.Lists;
+import org.gneisscode.improvedmapcolors.ColorStateMapManager.BlockStatePropertyTracker;
+import org.gneisscode.improvedmapcolors.ColorStateMapManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -26,7 +29,7 @@ public class StateMapHolder {
             (instance) ->
                     instance.group(
                             Codec.list(BlockStatePropertyTracker.PROPERTY_TRACKER_CODEC)
-                                    .fieldOf("stateColorIDMap")
+                                    .fieldOf("stateColorIDList")
                                     .forGetter((f) -> f.stateColorIDMap)
                             ).apply(instance, StateMapHolder::new)
 
@@ -41,18 +44,24 @@ public class StateMapHolder {
 
     }
 
+    public void addTrackersToMap(@NotNull Map<BlockState, BlockStatePropertyTracker> trackerMap){
+        for(BlockStatePropertyTracker t : this.stateColorIDMap){
+            trackerMap.put(t.state(), t);
+        }
+    }
+
     public void addStatesToMap(Map<BlockState, Integer> stateColorIDMap){
         for(BlockStatePropertyTracker tracker : this.stateColorIDMap){
-            BlockState defaultState = tracker.state.getBlock().defaultBlockState();
+            BlockState defaultState = tracker.state().getBlock().defaultBlockState();
 
-            for(Property<?> p : tracker.state.getProperties()){
+            for(Property<?> p : tracker.state().getProperties()){
 
                 if(p instanceof IntegerProperty ip)
-                    defaultState = setProperty(defaultState, ip, ip.getName(tracker.state.getValue(ip)));
+                    defaultState = setProperty(defaultState, ip, ip.getName(tracker.state().getValue(ip)));
                 else if(p instanceof BooleanProperty bp)
-                    defaultState = setProperty(defaultState, bp, bp.getName(tracker.state.getValue(bp)));
+                    defaultState = setProperty(defaultState, bp, bp.getName(tracker.state().getValue(bp)));
                 else if(p instanceof EnumProperty<?> ep) {
-                    defaultState = setProperty(defaultState, ep, tracker.state.getValue(ep).getSerializedName());
+                    defaultState = setProperty(defaultState, ep, tracker.state().getValue(ep).getSerializedName());
                 }
 
             }
@@ -67,19 +76,10 @@ public class StateMapHolder {
 
     public void addTrackedPropertiesToMap(Map<BlockState, List<String>> statePropertyListMap){
         for(BlockStatePropertyTracker tracker : this.stateColorIDMap){
-            if(tracker.trackedProperties != null) statePropertyListMap.put(tracker.state, tracker.trackedProperties);
+            if(tracker.trackedProperties() != null) statePropertyListMap.put(tracker.state(), tracker.trackedProperties());
         }
     }
 
-    public record BlockStatePropertyTracker(BlockState state, int colorID, @Nullable List<String> trackedProperties){
-        public static final Codec<BlockStatePropertyTracker> PROPERTY_TRACKER_CODEC = RecordCodecBuilder.create(
-                (instance) ->
-                        instance.group(
-                                BlockState.CODEC.fieldOf("state").forGetter(BlockStatePropertyTracker::state),
-                                Codec.intRange(0, 63).fieldOf("colorID").forGetter(BlockStatePropertyTracker::colorID),
-                                Codec.list(Codec.STRING).optionalFieldOf("trackedProperties").forGetter((inst) -> inst.trackedProperties() == null ? Optional.empty() : Optional.of(inst.trackedProperties()))
-                        ).apply(instance, (state, id, op) -> new BlockStatePropertyTracker(state, id, op.orElse(null)))
-        );
-    }
+
 
 }

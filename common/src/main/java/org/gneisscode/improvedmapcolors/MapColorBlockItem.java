@@ -48,7 +48,7 @@ public class MapColorBlockItem extends BlockItem {
 
             BlockState nextState = cycleState(blockState, MAP_COLOR, player.isSecondaryUseActive());
             level.setBlock(blockPos, nextState, 2);
-            message(player, Component.translatable("item.improvedmapcolors.map_block_item.update_color", blockState.getValue(MAP_COLOR), nextState.getValue(MAP_COLOR)));
+            message(player, Component.translatable("item.improvedmapcolors.map_block_item.update_color", blockState.getValue(MAP_COLOR) - 1, nextState.getValue(MAP_COLOR) - 1));
             return InteractionResult.SUCCESS_SERVER;
         } else {
             return InteractionResult.CONSUME;

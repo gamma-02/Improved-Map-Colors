@@ -8,6 +8,9 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.state.BlockState;
+import org.gneisscode.improvedmapcolors.ColorStateMapManager;
+import org.gneisscode.improvedmapcolors.CommonConfig;
+import org.gneisscode.improvedmapcolors.ImprovedMapColors;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,16 +32,29 @@ public class StateMapResourceReloadListener extends SimpleJsonResourceReloadList
          ProfilerFiller profilerFiller
         ) {
 
+        if(!CommonConfig.CONFIG.statesConfigMode.get().hasDatapack())
+            return;
+
+//        if(CommonConfig.CONFIG.statesConfigMode.get().hasModConfig())
+//            ColorStateMapManager.setConfigStateTrackerMap(
+//                    CommonConfig.loadBlockStateListFromConfig()
+//            );
+
         profilerFiller.push("Map Color States Reload");
-        profilerFiller.push("Phase One: states");
-        HashMap<BlockState, Integer> map = new HashMap<>();
-        holderMap.forEach((rl, holder) -> holder.addStatesToMap(map));
-        profilerFiller.popPush("Phase Two: tracked states");
-        HashMap<BlockState, List<String>> trackedMap = new HashMap<>();
-        holderMap.forEach((rl, sh) -> sh.addTrackedPropertiesToMap(trackedMap));
+
+        HashMap<BlockState, ColorStateMapManager.BlockStatePropertyTracker> stateMap = new HashMap<>();
+
+        holderMap.forEach((rsl, smh) ->
+                smh.addTrackersToMap(stateMap)
+        );
+
         profilerFiller.pop();
-        profilerFiller.pop();
+
         LogUtils.getLogger().info("Reloaded map states!");
+
+        ColorStateMapManager.setDatapackStateTrackerMap(stateMap);
+
+
 
 
 

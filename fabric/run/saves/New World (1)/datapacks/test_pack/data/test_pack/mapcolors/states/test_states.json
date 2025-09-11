@@ -1,0 +1,22 @@
+{
+  "stateColorIDList": [
+    {
+      "state": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": false
+        }
+      },
+      "colorID": 23,
+      "trackedProperties": [
+        "snowy"
+      ]
+    },
+    {
+      "state": {
+        "Name": "minecraft:glass"
+      },
+      "colorID": 8
+    }
+  ]
+}

@@ -21,17 +21,13 @@ public class ConfigEvents {
     public static void onConfigLoad(ModConfigEvent.Loading loading){
         LogUtils.getLogger().info("Loading Colors and Config!");
 
-        CommonConfig.loadColorList();
-        CommonConfig.loadBlockStateList();
+        CommonConfig.reloadConfig();
 
     }
 
     @SubscribeEvent
     public static void onConfigReload(ModConfigEvent.Reloading reloading){
-        LogUtils.getLogger().info("Reloading Colors!");
-
-        CommonConfig.loadColorList();
-        CommonConfig.loadBlockStateList();
+        CommonConfig.reloadConfig();
 
     }
 

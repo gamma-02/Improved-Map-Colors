@@ -33,7 +33,9 @@ public class ClientLevelMixin {
 
         if (this.minecraft.gameMode.getPlayerMode() == GameType.CREATIVE) {
             ItemStack itemStack = this.minecraft.player.getMainHandItem();
-            Item item = itemStack.getItem();
+            Item item = itemStack.getItem() == ImprovedMapColors.MAP_BLOCK_ITEM.get()
+                    ? itemStack.getItem()
+                    : this.minecraft.player.getOffhandItem().getItem();
             if (item == ImprovedMapColors.MAP_BLOCK_ITEM.get() && item instanceof BlockItem blockItem) {
                 cir.setReturnValue(blockItem.getBlock());
             }
