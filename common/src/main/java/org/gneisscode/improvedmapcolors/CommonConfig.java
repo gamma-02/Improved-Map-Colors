@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CommonConfig /*extends MidnightConfig*/ {
@@ -239,6 +240,23 @@ public class CommonConfig /*extends MidnightConfig*/ {
         return f.exists() && f.isFile() && (s.endsWith(".csv") || s.endsWith(".json"));
     }
 
+    public static boolean zipFileValidator(String s){
+        if(s.isEmpty()){
+            return true;
+        }
+        Path p = null;
+        try {
+            p = Paths.get(s);
+        } catch (InvalidPathException | NullPointerException ex) {
+            return false;
+        }
+
+        File f = p.toFile();
+
+        return s.endsWith(".zip");
+
+    }
+
     public static boolean validateBlockStateListEntry(Object o){
         if (!(o instanceof String s)) {
             return false;
@@ -340,21 +358,35 @@ public class CommonConfig /*extends MidnightConfig*/ {
         for(int i = 0; i < entries.size(); i++){
             String[] entry = entries.get(i);
 
+            int realLength = Math.toIntExact(Arrays.stream(entry).filter(Predicate.not(String::isEmpty)).count());
+
             Color c = null;
 
-            try{
-                c = Color.decode(entry[0]);
-            }catch(NumberFormatException ignored){
-                continue;
+            if(realLength != 4) {
+                try {
+                    c = Color.decode(entry[0]);
+                } catch (NumberFormatException ignored) {
+                    continue;
+                }
+            }else{
+                c = new Color(Integer.parseInt(entry[1]), Integer.parseInt(entry[2]), Integer.parseInt(entry[3]));
             }
 
 
-            if(entry.length == 1){
+            //[id]|r|g|b|
+            if(realLength == 4) {
+                colors.set(Integer.parseInt(entry[0]), c);
+                continue;
+            }
+            if(realLength == 1){
+                //#color
                 colors.set(i, c);
             }else{
                 try{
+                    //[id]|#color
                     colors.set(Integer.parseInt(entry[1]), c);
                 }catch (NumberFormatException nfe) {
+                    //fallback
                     colors.set(i, c);
                 }
             }

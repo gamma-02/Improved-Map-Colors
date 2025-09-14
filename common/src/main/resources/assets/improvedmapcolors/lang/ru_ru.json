@@ -1,0 +1,33 @@
+{
+  "improvedmapcolors.configuration.colorlist": "Цвета карты",
+  "improvedmapcolors.configuration.color_file": "Файл с цветами",
+  "improvedmapcolors.configuration.title": "Настройки Улучшенных Цветов Карт",
+  "improvedmapcolors.configuration.color_file.tooltip": "Путь к CSV файлу с цветами, как: |Hex цвет|[ID (не обязательно)]|\nЕсли нет ID, то в его качестве будет использован номер строки в файле",
+  "improvedmapcolors.configuration.colorlist.tooltip": "Список цветов для замены ванильных (по-умолчанию цвета Gneiss-а)",
+  "improvedmapcolors.configuration.section.improvedmapcolors.common.toml": "Настройки Улучшенных Цветов Карт",
+  "improvedmapcolors.configuration.section.improvedmapcolors.common.toml.title": "Настройки Улучшенных Цветов Карт",
+  "improvedmapcolors.configuration.colorlist.button": "Редактировать",
+  "improvedmapcolors.configuration.blockstate_file": "Файл с BlockState",
+  "improvedmapcolors.configuration.state_list": "Список BlockState цветов",
+  "improvedmapcolors.configuration.state_list.button": "Редактировать",
+  "improvedmapcolors.configuration.state_list.tooltip": "Список BlockStates:ColorID для замены ванильных BlockStates (по-умолчанию BlockStates Gneiss-а, если возможно)",
+  "improvedmapcolors.configuration.use_blockstate_file.tooltip": "Use a list of BlockStates and colorIDs from a CSV defined below",
+  "improvedmapcolors.configuration.blockstate_file.tooltip": "Путь к CSV файлу с позициями, как: \n|ID блока[statedata]|ID цвета<обязательно>| ИЛИ: \n|ID блока|[statedata]|ID цвета<обязательно>|",
+  "improvedmapcolors.configuration.statesConfigMode": "Режим настройки Blockstates",
+  "improvedmapcolors.configuration.colorConfigMode": "Режим настройки цветов",
+  "improvedmapcolors.configuration.colorConfigMode.tooltip": "Какой режим использовать при загрузке цветовых значений\nПри конфликте, значения датапака переопределят config, и значения CSV переопределят и датапак и config.",
+  "improvedmapcolors.configuration.statesConfigMode.tooltip": "Какой режим использовать для загрузки значений Blockstate \nПри конфликте, значения датапака переопределят config, и значения CSV переопределят и датапак и config",
+
+  "improvedmapcolors.configuration.exportPack.buttonLabel": "Экспортировать пакет пресетов ",
+  "improvedmapcolors.configuration.exportPack": "Экспортировать пакет пресетов ",
+  "improvedmapcolors.configuration.packExportPath": "Путь для экспорта пресетов",
+  "improvedmapcolors.configuration.packExportPath.tooltip": "Путь для экспорта пресет датапака из CSV файлов.\nВажно: Режим настройки должен быть CSV_FILE или ALL\n",
+  "improvedmapcolors.configuration.packName": "Название пресет пака",
+  "improvedmapcolors.configuration.packName.tooltip": "Namespace пака который вы экспортируете",
+
+  "item.improvedmapcolors.map_block_item": "Блок цвета карты",
+  "item.improvedmapcolors.map_block_item.tooltip": "%s и %s + %s для изменения цветовых значений",
+  "item.improvedmapcolors.map_block_item.update_color": "Цвет блока на карте изменён с %s на %s",
+  "block.improvedmapcolors.map_color_block": "Блок цвета карты"
+
+}

@@ -1,11 +1,12 @@
 package org.gneisscode.improvedmapcolors.fabric;
 
-import com.mojang.logging.LogUtils;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.neoforged.fml.config.ModConfig;
 import org.gneisscode.improvedmapcolors.CommonConfig;
 import org.gneisscode.improvedmapcolors.ImprovedMapColors;
 import net.fabricmc.api.ModInitializer;
+import org.gneisscode.improvedmapcolors.networking.ColorListSyncPayload;
 
 import static org.gneisscode.improvedmapcolors.ImprovedMapColors.MOD_ID;
 
@@ -18,6 +19,7 @@ public final class ImprovedMapColorsFabric implements ModInitializer {
 
     public static void init(){
         ConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.COMMON, CommonConfig.CONFIG_SPEC);
+        PayloadTypeRegistry.playS2C().register(ColorListSyncPayload.ID, ColorListSyncPayload.CODEC);
         
         //Config loading event is broken, moved loading to mod init
 
@@ -26,6 +28,12 @@ public final class ImprovedMapColorsFabric implements ModInitializer {
             CommonConfig.reloadConfig();
 
         });
+
+//        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, manager, success) -> {
+//            server.getAllLevels().forEach(SyncColors::syncColors);
+//        });
+
+
     }
 
 //    public static MapColorBlock MAP_COLOR_BLOCK =

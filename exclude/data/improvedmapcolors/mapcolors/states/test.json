@@ -1,0 +1,24 @@
+{
+  "stateColorIDList": [
+    {
+      "state": {
+        "Name": "minecraft:black_bed",
+        "Properties": {
+          "part": "foot",
+          "facing": "south"
+        }
+      },
+      "colorID": 20,
+      "trackedProperties": [
+        "part",
+        "facing"
+      ]
+    },
+    {
+      "state": {
+        "Name": "minecraft:end_stone"
+      },
+      "colorID": 3
+    }
+  ]
+}

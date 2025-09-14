@@ -4,7 +4,7 @@
   "improvedmapcolors.configuration.color_file": "Color File",
   "improvedmapcolors.configuration.use_file.tooltip": "Use a list of colors from the CSV defined below",
   "improvedmapcolors.configuration.title": "Improved Map Colors Configuration",
-  "improvedmapcolors.configuration.color_file.tooltip": "Path to a CSV list of colors like: |hex color|[optional id]|\nIf no ID is supplied, the id will be the column number in the file",
+  "improvedmapcolors.configuration.color_file.tooltip": "Path to a CSV list of colors like: |hex color|[optional id]|\nIf no ID is supplied, the id will be the row number in the file",
   "improvedmapcolors.configuration.colorlist.tooltip": "List of colors to replace vanilla map colors, defaulting to Vanilla colors (gneiss colors)",
   "improvedmapcolors.configuration.section.improvedmapcolors.common.toml": "Improved Map Colors Configuration",
   "improvedmapcolors.configuration.section.improvedmapcolors.common.toml.title": "Improved Map Colors Configuration",
@@ -21,9 +21,16 @@
   "improvedmapcolors.configuration.colorConfigMode.tooltip": "What mode to use when loading color values\nOn conflicts, datapack values will override the config, and CSV values will override both datapacks and the config",
   "improvedmapcolors.configuration.statesConfigMode.tooltip": "What mode to use when loading BlockState values\nOn conflicts, datapack values will override the config', and CSV values will override both datapacks and the config",
 
+  "improvedmapcolors.configuration.exportPack.buttonLabel": "Export Preset Pack",
+  "improvedmapcolors.configuration.exportPack": "Export Preset Pack",
+  "improvedmapcolors.configuration.packExportPath": "Preset Export Path",
+  "improvedmapcolors.configuration.packExportPath.tooltip": "Path to export a preset datapack to from listed CSVs\nnote: Config mode has to be set to CSV_FILE or ALL",
+  "improvedmapcolors.configuration.packName": "Preset Pack Name",
+  "improvedmapcolors.configuration.packName.tooltip": "Namespace of the pack you are exporting",
+
   "item.improvedmapcolors.map_block_item": "Map Color Block Item",
   "item.improvedmapcolors.map_block_item.tooltip": "%s and %s + %s to tune map color values",
   "item.improvedmapcolors.map_block_item.update_color": "Map Color changed from %s to %s",
 
-  "block.improvedmapcolors.map_block_item": "Map Color Block"
+  "block.improvedmapcolors.map_color_block": "Map Color Block"
 }

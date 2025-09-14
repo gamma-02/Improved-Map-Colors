@@ -1,21 +1,26 @@
 package org.gneisscode.improvedmapcolors;
 
 import net.minecraft.world.level.material.MapColor;
+import org.gneisscode.improvedmapcolors.networking.ColorListSyncPayload;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class ColorListManager {
+
+
     @Nullable
     private static List<@Nullable Color>
             configColorList = new ArrayList<>(),
             datapackColorList = new ArrayList<>(),
             overridingColorList = new ArrayList<>();
+
+    @Nullable
+    private static Color[] serverColors = null;
+
+
 
     public static final Supplier<Boolean>
             runConfigColors = () -> (
@@ -72,34 +77,60 @@ public class ColorListManager {
         return overridingColorList;
     }
 
-    public static void setOverridingColorList(@Nullable List<@Nullable Color> overridingColorList) {
+    public static void setOverridingColorList(@Nullable List<@Nullable Color> please) {
 
-        ColorListManager.overridingColorList = overridingColorList;
+        ColorListManager.overridingColorList = new ArrayList<>(please);
 
         reloadMapColorList();
 
     }
+
+    public static void onDisconnect(){
+        serverColors = null;
+        reloadMapColorList();
+    }
+
+    public static void handleSyncPayload(ColorListSyncPayload payload){
+
+        System.out.println("sync payload recieved");
+        serverColors = Arrays.copyOf(payload.colors(), payload.colors().length);
+        reloadMapColorList();
+    }
+
+    /*
+     Divide + Conquer
+      L Divide and Conquer and Merge
+     1. Take input of size n
+     2. divide X "down the middle"
+     3. Assume correct solutions for left and right for free/magic
+     4. Turn solutions for L&R into solution for X
+     */
+
 
 
     
     
     
     private static void reloadMapColorList(){
+
+        if(serverColors != null){
+            for (int i = 0; i < serverColors.length; i++) {
+                Color serverColor = serverColors[i];
+                if (serverColor != null) {
+                    MapColor.MATERIAL_COLORS[i].col = serverColor.getRGB();
+                }
+            }
+
+            return;
+        }
+
+
+
         //checking conditions
 
-        if(!CommonConfig.CONFIG.statesConfigMode.get().hasCSV()){
-            overridingColorList = new ArrayList<>();
-        }
+        ensureListsExist();
 
-        if(!CommonConfig.CONFIG.statesConfigMode.get().hasDatapack()){
-            datapackColorList = new ArrayList<>();
-        }
 
-        if(!CommonConfig.CONFIG.statesConfigMode.get().hasModConfig()){
-            configColorList = new ArrayList<>();
-        }
-
-        
         for(int i = 0; i < MapColor.MATERIAL_COLORS.length; i++){
             MapColor c = MapColor.MATERIAL_COLORS[i];
             
@@ -137,6 +168,49 @@ public class ColorListManager {
 
         return false;
 
+    }
+
+    public static Color[] buildSyncList() {
+
+        Color[] list = new Color[MapColor.MATERIAL_COLORS.length];
+
+        ensureListsExist();
+
+
+        for(int i = 0; i < list.length; i++){
+
+            if(runConfigColors.get()){
+                list[i] = Objects.requireNonNull(configColorList).get(i);
+            }
+
+            if(runDatapackColors.get()){
+                list[i] = Objects.requireNonNull(datapackColorList).get(i);
+            }
+
+            if(runOverrideColors.get()){
+                list[i] = Objects.requireNonNull(overridingColorList).get(i);
+            }
+
+
+
+
+        }
+
+        return list;
+    }
+
+    public static void ensureListsExist() {
+        if(!CommonConfig.CONFIG.colorConfigMode.get().hasCSV()){
+            overridingColorList = new ArrayList<>();
+        }
+
+        if(!CommonConfig.CONFIG.colorConfigMode.get().hasDatapack()){
+            datapackColorList = new ArrayList<>();
+        }
+
+        if(!CommonConfig.CONFIG.colorConfigMode.get().hasModConfig()){
+            configColorList = new ArrayList<>();
+        }
     }
 
 //    private enum ReloadLevel{

@@ -9,7 +9,8 @@
   "mixins": [
     "BlockBehaviourPropertiesMixin",
     "MapColorMixin",
-    "MapItemMixin"
+    "MapItemMixin",
+    "ServerResourceReloadMixin"
   ],
   "injectors": {
     "defaultRequire": 1

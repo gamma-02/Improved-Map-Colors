@@ -14,6 +14,20 @@
     },
     {
       "state": {
+        "Name": "minecraft:black_bed",
+        "Properties": {
+          "part": "foot",
+          "facing": "north"
+        }
+      },
+      "colorID": 3,
+      "trackedProperties": [
+        "part",
+        "facing"
+      ]
+    },
+    {
+      "state": {
         "Name": "minecraft:glass"
       },
       "colorID": 8
