@@ -79,7 +79,9 @@ public class ColorListManager {
 
     public static void setOverridingColorList(@Nullable List<@Nullable Color> please) {
 
-        ColorListManager.overridingColorList = new ArrayList<>(please);
+        ColorListManager.overridingColorList = please != null
+                ? new ArrayList<>(please)
+                : new ArrayList<>();
 
         reloadMapColorList();
 
@@ -92,9 +94,9 @@ public class ColorListManager {
 
     public static void handleSyncPayload(ColorListSyncPayload payload){
 
-        System.out.println("sync payload recieved");
-        serverColors = Arrays.copyOf(payload.colors(), payload.colors().length);
-        reloadMapColorList();
+//        System.out.println("sync payload recieved");
+       serverColors = Arrays.copyOf(payload.colors(), payload.colors().length);
+       reloadMapColorList();
     }
 
     /*
@@ -113,16 +115,7 @@ public class ColorListManager {
     
     private static void reloadMapColorList(){
 
-        if(serverColors != null){
-            for (int i = 0; i < serverColors.length; i++) {
-                Color serverColor = serverColors[i];
-                if (serverColor != null) {
-                    MapColor.MATERIAL_COLORS[i].col = serverColor.getRGB();
-                }
-            }
 
-            return;
-        }
 
 
 
@@ -148,11 +141,22 @@ public class ColorListManager {
 
             if(runConfigColors.get()){
                 setMapColorFrom(c, Objects.requireNonNull(configColorList));
-                continue;//
+//                continue;//
             }
             
 
 
+
+        }
+
+        //moved down here so that the other config options will serve as a backup or fallback
+        if(serverColors != null){
+            for (int i = 0; i < serverColors.length; i++) {
+                Color serverColor = serverColors[i];
+                if (serverColor != null && serverColor.getRGB() != -1){
+                    MapColor.MATERIAL_COLORS[i].col = serverColor.getRGB();
+                }
+            }
 
         }
 

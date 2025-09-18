@@ -8,6 +8,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.MouseSettingsScreen;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +18,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.gneisscode.improvedmapcolors.CommonConfig;
+import org.gneisscode.improvedmapcolors.client.PresetOptionsScreen;
 import org.gneisscode.improvedmapcolors.presets.PresetDatapackExportTool;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +60,11 @@ public class CustomConfigScreen extends ConfigurationScreen.ConfigurationSection
 //                    LogUtils.getLogger().error("Could not export path!");
 //                    LogUtils.getLogger().error(e.getMessage());
 //                }
-                System.out.println("Do open datapack selection screen here!");
+//                System.out.println("Do open datapack selection screen here!");
+
+                this.minecraft.setScreen(new PresetOptionsScreen(this, this.options, Component.translatable("improvedmapcolors.configuration.presets.title")));
+
+
 
             }).build();
 

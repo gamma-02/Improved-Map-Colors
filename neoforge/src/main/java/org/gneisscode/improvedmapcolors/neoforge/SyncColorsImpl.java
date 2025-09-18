@@ -1,4 +1,4 @@
-package org.gneisscode.improvedmapcolors.neoforge.networking;
+package org.gneisscode.improvedmapcolors.neoforge;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

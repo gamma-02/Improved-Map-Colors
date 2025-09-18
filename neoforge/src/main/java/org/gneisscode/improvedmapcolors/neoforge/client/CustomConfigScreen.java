@@ -12,7 +12,9 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.gneisscode.improvedmapcolors.CommonConfig;
+import org.gneisscode.improvedmapcolors.client.PresetOptionsScreen;
 import org.gneisscode.improvedmapcolors.presets.PresetDatapackExportTool;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -35,7 +37,7 @@ public class CustomConfigScreen extends ConfigurationScreen.ConfigurationSection
 
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected ConfigurationScreen.ConfigurationSectionScreen rebuild() {
+    protected ConfigurationScreen.@NotNull ConfigurationSectionScreen rebuild() {
         if (list != null) { // this may be called early, skip and wait for init() then
             list.children().clear();
             boolean hasUndoableElements = false;
@@ -43,15 +45,11 @@ public class CustomConfigScreen extends ConfigurationScreen.ConfigurationSection
             final List<@Nullable Element> elements = new ArrayList<>();
 
             Button b = Button.builder(Component.translatable("improvedmapcolors.configuration.presetsButton"), (button) -> {
-//                File zipFile = new File(packExportPath);
-//
-//                try{
-//                    PresetDatapackExportTool.exportDataPackPresetFromCSV(zipFile, this.packName);
-//                } catch (IOException e) {
-//                    LogUtils.getLogger().error("Could not export path!");
-//                    LogUtils.getLogger().error(e.getMessage());
-//                }
-                System.out.println("Do open datapack selection screen here!");
+
+                this.minecraft.setScreen(new PresetOptionsScreen(this, this.options, Component.translatable("improvedmapcolors.configuration.presets.title")));
+
+//                System.out.println("Do open datapack selection screen here!");
+
 
             }).build();
 

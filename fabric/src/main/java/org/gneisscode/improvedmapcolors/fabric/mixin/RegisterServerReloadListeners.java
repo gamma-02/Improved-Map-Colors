@@ -9,6 +9,7 @@ import net.minecraft.server.packs.resources.ReloadInstance;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import org.gneisscode.improvedmapcolors.resourcestuff.ColorListResourceReloadListener;
+import org.gneisscode.improvedmapcolors.resourcestuff.PresetLister;
 import org.gneisscode.improvedmapcolors.resourcestuff.StateMapResourceReloadListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,8 +29,10 @@ public class RegisterServerReloadListeners {
     )
     private static ReloadInstance addOurReloadListeners(ResourceManager arg, List<PreparableReloadListener> list, Executor executor, Executor executor2, CompletableFuture<Unit> completableFuture, boolean bl, Operation<ReloadInstance> original){
         List<PreparableReloadListener> preparableReloadListeners = new ArrayList<>(list);
+        preparableReloadListeners.add(PresetLister.LISTENER);
         preparableReloadListeners.add(ColorListResourceReloadListener.LISTENER);
         preparableReloadListeners.add(StateMapResourceReloadListener.LISTENER);
+
 
         return original.call(arg, Collections.unmodifiableList(preparableReloadListeners), executor, executor2, completableFuture, bl);
     }

@@ -6,7 +6,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.gneisscode.improvedmapcolors.ImprovedMapColors;
-import org.gneisscode.improvedmapcolors.ImprovedMapColorsClient;
+import org.gneisscode.improvedmapcolors.client.ImprovedMapColorsClient;
 
 @Mod(value = ImprovedMapColors.MOD_ID, dist = Dist.CLIENT)
 //long name lol

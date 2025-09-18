@@ -15,9 +15,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.stylesheets.LinkStyle;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import static org.gneisscode.improvedmapcolors.MapColorBlock.MAP_COLOR;
@@ -46,7 +47,7 @@ public class MapColorBlockItem extends BlockItem {
         if (!level.isClientSide && player != null && player.canUseGameMasterBlocks()) {
 
 
-            BlockState nextState = cycleState(blockState, MAP_COLOR, player.isSecondaryUseActive());
+            BlockState nextState = cycleState(blockState, player.isSecondaryUseActive());
             level.setBlock(blockPos, nextState, 2);
             message(player, Component.translatable("item.improvedmapcolors.map_block_item.update_color", blockState.getValue(MAP_COLOR) - 1, nextState.getValue(MAP_COLOR) - 1));
             return InteractionResult.SUCCESS_SERVER;
@@ -57,11 +58,12 @@ public class MapColorBlockItem extends BlockItem {
 
     }
 
-    private static <T extends Comparable<T>> BlockState cycleState(BlockState blockState, Property<T> property, boolean bl) {
-        return blockState.setValue(property, getRelative(property.getPossibleValues(), blockState.getValue(property), bl));
+    private static BlockState cycleState(BlockState blockState, boolean bl) {
+        return blockState.setValue( MapColorBlock.MAP_COLOR, getRelative((MapColorBlock.MAP_COLOR).getPossibleValues(), blockState.getValue( MapColorBlock.MAP_COLOR), bl));
     }
 
-    private static <T> T getRelative(Iterable<T> iterable, @Nullable T object, boolean bl) {
+    private static int getRelative(List<Integer> iterable, Integer object, boolean bl) {
+        if(object.equals(iterable.getFirst()) && bl) return object; //prevent underflow
         return bl ? Util.findPreviousInIterable(iterable, object) : Util.findNextInIterable(iterable, object);
     }
 

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -16,13 +17,17 @@ public class ColorListHolder {
             (instance) ->
                 instance.group(
                         Codec.unboundedMap(Codec.STRING, Codec.STRING).fieldOf("colorList").forGetter((f) -> {
-                            Map<String, String> colorMap = new HashMap<>();
+
+                            Map<String, String> colorMap = new Object2ObjectArrayMap<>();
                             for(int i = 0; i < f.colorList.size(); i++){
                                 Color color = f.colorList.get(i);
+
 
                                 if(color == null){
                                     continue;
                                 }
+
+
 
                                 colorMap.put(Integer.toString(i), String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                             }

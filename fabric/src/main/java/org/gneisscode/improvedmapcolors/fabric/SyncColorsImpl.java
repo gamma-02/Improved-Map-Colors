@@ -13,7 +13,7 @@ public class SyncColorsImpl {
     public static void syncColors(ServerLevel level){
 
 
-        System.out.println("SYNCING COLORS!!!!!!");
+//        System.out.println("SYNCING COLORS!!!!!!");
 
 
         Color[] colors = ColorListManager.buildSyncList();
@@ -27,7 +27,7 @@ public class SyncColorsImpl {
 
     public static void syncColors(ServerPlayer p){
 
-        System.out.println("SYNCING COLORS!!!!!!");
+//        System.out.println("SYNCING COLORS!!!!!!");
 
         Color[] colors = ColorListManager.buildSyncList();
 

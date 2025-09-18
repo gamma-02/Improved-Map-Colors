@@ -2,12 +2,11 @@ package org.gneisscode.improvedmapcolors.fabric.client;
 
 import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import org.gneisscode.improvedmapcolors.ColorListManager;
 import org.gneisscode.improvedmapcolors.ImprovedMapColors;
-import org.gneisscode.improvedmapcolors.ImprovedMapColorsClient;
+import org.gneisscode.improvedmapcolors.client.ImprovedMapColorsClient;
 import org.gneisscode.improvedmapcolors.networking.ColorListSyncPayload;
 
 public final class ImprovedMapColorsFabricClient implements ClientModInitializer {

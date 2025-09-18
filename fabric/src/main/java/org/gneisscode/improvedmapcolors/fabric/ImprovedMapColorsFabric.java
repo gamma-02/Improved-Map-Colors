@@ -1,12 +1,17 @@
 package org.gneisscode.improvedmapcolors.fabric;
 
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
+import net.fabricmc.fabric.api.client.networking.v1.C2SPlayChannelEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.neoforged.fml.config.ModConfig;
 import org.gneisscode.improvedmapcolors.CommonConfig;
 import org.gneisscode.improvedmapcolors.ImprovedMapColors;
 import net.fabricmc.api.ModInitializer;
+import org.gneisscode.improvedmapcolors.PresetManager;
 import org.gneisscode.improvedmapcolors.networking.ColorListSyncPayload;
+import org.gneisscode.improvedmapcolors.networking.PresetSyncS2CPacket;
+import org.gneisscode.improvedmapcolors.networking.SelectPresetC2SPayload;
 
 import static org.gneisscode.improvedmapcolors.ImprovedMapColors.MOD_ID;
 
@@ -20,7 +25,12 @@ public final class ImprovedMapColorsFabric implements ModInitializer {
     public static void init(){
         ConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.COMMON, CommonConfig.CONFIG_SPEC);
         PayloadTypeRegistry.playS2C().register(ColorListSyncPayload.ID, ColorListSyncPayload.CODEC);
-        
+        PayloadTypeRegistry.playC2S().register(SelectPresetC2SPayload.ID, SelectPresetC2SPayload.PAYLOAD_CODEC);
+        PayloadTypeRegistry.playS2C().register(PresetSyncS2CPacket.ID, PresetSyncS2CPacket.PAYLOAD_CODEC);
+
+        ServerPlayNetworking.registerGlobalReceiver(SelectPresetC2SPayload.ID, (payload, ctx) ->{
+            PresetManager.handleSetPresetPacket(payload, ctx.server(), ctx.player());
+        });
         //Config loading event is broken, moved loading to mod init
 
         fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents.reloading(MOD_ID).register((l) -> {

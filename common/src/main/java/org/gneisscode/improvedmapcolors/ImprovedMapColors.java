@@ -3,6 +3,7 @@ package org.gneisscode.improvedmapcolors;
 
 import com.google.common.base.Suppliers;
 import dev.architectury.event.events.client.ClientPlayerEvent;
+import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.Registrar;
@@ -37,6 +38,10 @@ public final class ImprovedMapColors {
     public static final String MOD_ID = "improvedmapcolors";
 
     public static final ResourceLocation COLOR_LIST_SYNC_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, "color_list_sync_payload");
+    public static final ResourceLocation CHOOSE_PRESET_PAYLOAD_ID = resource("choose_preset_payload");
+    public static final ResourceLocation SYNC_PRESET_PAYLOAD_ID = resource("sync_preset_payload");
+
+
 
     public static final Supplier<RegistrarManager> MANAGER = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
     public static final Registrar<Block> BLOCKS = MANAGER.get().get(Registries.BLOCK);
@@ -57,7 +62,15 @@ public final class ImprovedMapColors {
     public static void init() {
 
         PlayerEvent.PLAYER_JOIN.register(SyncColors::syncColors);
+        PlayerEvent.PLAYER_JOIN.register(PresetManager::syncPresetOnPlayerJoin);
 
+        LifecycleEvent.SERVER_LEVEL_LOAD.register(PresetManager::checkAndEnsurePresetPackLoaded);
+
+
+    }
+
+    public static ResourceLocation resource(String path){
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
 

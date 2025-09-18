@@ -8,8 +8,10 @@
   ],
   "mixins": [
     "BlockBehaviourPropertiesMixin",
+    "LevelStorageSourceMixin",
     "MapColorMixin",
     "MapItemMixin",
+    "PrimaryLevelDataMixin",
     "ServerResourceReloadMixin"
   ],
   "injectors": {

@@ -19,12 +19,12 @@ public record ColorListSyncPayload(Color[] colors) implements CustomPacketPayloa
     public static CustomPacketPayload.Type<ColorListSyncPayload> ID = new CustomPacketPayload.Type<>(ImprovedMapColors.COLOR_LIST_SYNC_PAYLOAD_ID);
 
     public static StreamCodec<RegistryFriendlyByteBuf, Color> COLOR_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, (c) -> c != null ? c.getRGB() : 0,
-            Color::new
+            ByteBufCodecs.INT, (c) -> c != null ? c.getRGB() : -1,
+            (c) -> c != -1 ? new Color(c) : null
     );
     public static StreamCodec<ByteBuf, Color> NEO_COLOR_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, (c) -> c != null ? c.getRGB() : 0,
-            Color::new
+            ByteBufCodecs.INT, (c) -> c != null ? c.getRGB() : -1,
+            (c) -> c != -1 ? new Color(c) : null
     );
 
     public static StreamCodec<RegistryFriendlyByteBuf, ColorListSyncPayload> CODEC = StreamCodec.composite(

@@ -42,7 +42,7 @@ public class PresetDatapackExportTool {
             List<Color> csvColorList = ColorListManager.overridingColorList();
 
             if(csvColorList != null) {
-                csvColorList = csvColorList.stream().filter(Objects::nonNull).toList();
+                csvColorList = csvColorList.stream().toList();
                 ColorListHolder holder = new ColorListHolder(csvColorList);
 
                 var colorListResult = ColorListHolder.COLOR_LIST_CODEC.encode(holder, JsonOps.INSTANCE, new JsonObject());
