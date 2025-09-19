@@ -12,7 +12,6 @@ public class ImprovedMapColorsClient {
 
             ColorListManager.onDisconnect();
             //????? why is this nessecary?? why is this called when you're joining???
-            System.out.println(a);
             if(a == null) return;
             PresetManager.selectedPreset = null;
         });

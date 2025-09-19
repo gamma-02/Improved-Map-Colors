@@ -10,6 +10,7 @@ import org.gneisscode.improvedmapcolors.networking.SelectPresetC2SPayload;
 public class PresetManagerImpl {
 
     public static void setAndSendSelectedPreset(PresetManager.Preset preset) {
+        PresetManager.selectedPreset = preset;
         ClientPlayNetworking.send(new SelectPresetC2SPayload(preset));
     }
 

@@ -25,7 +25,12 @@ public class PrimaryLevelDataMixin implements PresetDataContainer {
 
     @Inject(method = "setTagData", at = @At("HEAD"))
     private void addCustomTagData(RegistryAccess registryAccess, CompoundTag compoundTag, CompoundTag compoundTag2, CallbackInfo ci){
-        compoundTag.putString("mapColorPreset", this.improvedmapcolors$savedPreset.getSerializedName());
+
+        if(this.improvedmapcolors$savedPreset != null)
+            compoundTag.putString("mapColorPreset", this.improvedmapcolors$savedPreset.getSerializedName());
+        else if(PresetManager.selectedPreset != null)
+            compoundTag.putString("mapColorPreset", PresetManager.selectedPreset.getSerializedName());
+
     }
 
 //    @Inject(method = "parse", at = @At("HEAD"))

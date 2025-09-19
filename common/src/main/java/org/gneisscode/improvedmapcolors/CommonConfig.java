@@ -105,7 +105,7 @@ public class CommonConfig /*extends MidnightConfig*/ {
     public final ModConfigSpec.EnumValue<ConfigMode> statesConfigMode;
     public final ModConfigSpec.ConfigValue<String> blockStateCsvPath;
 
-    //todo: add a few examples and tests
+    //done: add a few examples and tests
     public static final ArrayList<String> defaultStateList = Lists.newArrayList(
             "minecraft:poppy:28",
             "allium:16",
@@ -122,7 +122,7 @@ public class CommonConfig /*extends MidnightConfig*/ {
             "wither_rose:21"
     );
 
-    //todo: move out of the way asap
+    //lamo no: move out of the way asap
     public static final ArrayList<String> defaultColorList = Lists.newArrayList(
             "#000000",
             "#7fb238",
@@ -211,7 +211,7 @@ public class CommonConfig /*extends MidnightConfig*/ {
         }
 
         try{
-            Color c = Color.decode(s);
+            Color.decode(s);
         }catch (NumberFormatException nfe){
             return false;
         }
@@ -226,6 +226,8 @@ public class CommonConfig /*extends MidnightConfig*/ {
         if(s.isEmpty()){
             return true;
         }
+
+        s = s.replace("\"", "");
 
         Path p = null;
         try {
@@ -262,9 +264,11 @@ public class CommonConfig /*extends MidnightConfig*/ {
             return false;
         }
 
-        if (!s.contains(":")) {
-            return false;
-        }
+//        if (!s.contains(":")) {
+//            return false;
+//        }
+
+        return s.contains(":");
 //
 //        String[] split = s.split(":");
 //
@@ -284,7 +288,7 @@ public class CommonConfig /*extends MidnightConfig*/ {
 //        }else{
 //            return BuiltInRegistries.BLOCK.containsKey(ResourceLocation.fromNamespaceAndPath(split[0], split[1].split("\\[")[0]));
 //        }
-        return true;
+//        return true;
 
     }
 
@@ -324,7 +328,7 @@ public class CommonConfig /*extends MidnightConfig*/ {
     public static List<@Nullable Color> loadColorListCSV(){
         Path p = null;
         try {
-            p = Paths.get(CONFIG.colorCsvPath.get());
+            p = Paths.get(CONFIG.colorCsvPath.get().replace("\"", ""));
         } catch (InvalidPathException | NullPointerException ex) {
             return null;
         }
@@ -472,7 +476,7 @@ public class CommonConfig /*extends MidnightConfig*/ {
 
         Path p = null;
         try {
-            p = Paths.get(CONFIG.blockStateCsvPath.get());
+            p = Paths.get(CONFIG.blockStateCsvPath.get().replace("\"", ""));
         } catch (InvalidPathException | NullPointerException ex) {
             LogUtils.getLogger().error("CSV State Path invalid!");
             return null;

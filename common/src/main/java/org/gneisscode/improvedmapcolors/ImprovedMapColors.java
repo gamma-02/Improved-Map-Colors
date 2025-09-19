@@ -56,7 +56,9 @@ public final class ImprovedMapColors {
     public static final RegistrySupplier<Item> MAP_BLOCK_ITEM = ITEMS.register(ResourceLocation.fromNamespaceAndPath(MOD_ID, "map_block_item"), () -> new MapColorBlockItem(MAP_BLOCK.get(), new Item.Properties().rarity(Rarity.EPIC).setId(MAP_BLOCK_ITEM_KEY)));
 
 
-    //far future todo: redoing the map storage system
+    //future release: redoing the map storage system
+    //future release: survival-accessable map color block
+    //future release: custom presets
 
 
     public static void init() {

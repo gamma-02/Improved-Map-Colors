@@ -28,6 +28,30 @@
   "improvedmapcolors.configuration.packName": "Preset Pack Name",
   "improvedmapcolors.configuration.packName.tooltip": "Namespace of the pack you are exporting",
 
+  "improvedmapcolors.configuration.presets.title": "Presets",
+
+  "improvedmapcolors.configuration.preset.button.vanilla": "Apply",
+  "improvedmapcolors.configuration.preset.vanilla.tooltip": "Set preset to Vanilla(clears other presets)",
+  "improvedmapcolors.configuration.preset.vanilla": "Vanilla",
+
+  "improvedmapcolors.configuration.preset.button.sepia": "Apply",
+  "improvedmapcolors.configuration.preset.sepia.tooltip": "Set preset to Sepia",
+  "improvedmapcolors.configuration.preset.sepia": "Sepia",
+
+  "improvedmapcolors.configuration.preset.button.grayscale": "Apply",
+  "improvedmapcolors.configuration.preset.grayscale.tooltip": "Set preset to Grayscale",
+  "improvedmapcolors.configuration.preset.grayscale": "Grayscale",
+
+  "improvedmapcolors.configuration.preset.button.gameboy": "Apply",
+  "improvedmapcolors.configuration.preset.gameboy.tooltip": "Set preset to Gameboy",
+  "improvedmapcolors.configuration.preset.gameboy": "Gameboy",
+
+  "improvedmapcolors.configuration.preset.button.inverted": "Apply",
+  "improvedmapcolors.configuration.preset.inverted.tooltip": "Set preset to Inverted Colors",
+  "improvedmapcolors.configuration.preset.inverted": "Inverted",
+
+
+
   "improvedmapcolors.configuration.presetsButton": "Presets",
   "improvedmapcolors.configuration.presets": "Open Preset Screen",
   "improvedmapcolors.configuration.presets.tooltip": "Show the list of presets that come with the mod",

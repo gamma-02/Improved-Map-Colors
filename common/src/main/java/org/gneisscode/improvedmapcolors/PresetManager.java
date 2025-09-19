@@ -48,8 +48,8 @@ public class PresetManager {
 
     public static final Map<Preset, Resource> packDefaults = new HashMap<>();
 
-    public static Resource addPack(Preset p, Resource r){
-        return packDefaults.put(p, r);
+    public static void addPack(Preset p, Resource r){
+        packDefaults.put(p, r);
     }
 
     public static void clearPackDefaults(){
@@ -79,15 +79,6 @@ public class PresetManager {
     //called on the server
     @ExpectPlatform
     public static void syncPresetOnPlayerJoin(ServerPlayer p) { }
-
-
-    public static void loadWorldPreset(String mapColorPreset) {
-
-        Preset loadedPreset = Preset.getFromSeiralizedName(mapColorPreset);
-
-        setMapPreset(loadedPreset);
-
-    }
 
 
     public static Preset getServerPreset(MinecraftServer server){
@@ -281,7 +272,6 @@ public class PresetManager {
 
 
     private static Preset setMapPreset(Preset preset){
-        if(preset == null) System.out.println("gotchya");
         Preset oldPreset = selectedPreset;
         selectedPreset = preset;
 
@@ -309,7 +299,9 @@ public class PresetManager {
         VANILLA_FIXED("vanilla_fixed", resource("preset/vanilla_fixed"), false),
         GNEISS_PREFERED("gneiss", resource("preset/gneiss"), false),
         SEPIA("sepia", resource("preset/sepia")),
-        BW("black_and_white", resource("preset/blacknwhite"), false),
+        GRAYSCALE("grayscale", resource("preset/grayscale")),
+        PIP_BOY("gameboy", resource("preset/gameboy")),
+        INVERTED("inverted", resource("preset/inverted")),
         REDISTRIBUTED_COLORS("redistributed", resource("preset/redistributed"), false);
 
         public final String presetName;
