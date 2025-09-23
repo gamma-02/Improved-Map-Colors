@@ -1,5 +1,6 @@
 package org.gneisscode.improvedmapcolors.neoforge.networking;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -8,6 +9,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.gneisscode.improvedmapcolors.ColorListManager;
 import org.gneisscode.improvedmapcolors.PresetManager;
 import org.gneisscode.improvedmapcolors.networking.ColorListSyncPayload;
+import org.gneisscode.improvedmapcolors.networking.PresetSyncS2CPacket;
 import org.gneisscode.improvedmapcolors.networking.SelectPresetC2SPayload;
 
 import static org.gneisscode.improvedmapcolors.ImprovedMapColors.MOD_ID;
@@ -22,7 +24,13 @@ public class RegisterPackets {
         registrar.commonToClient(
                 ColorListSyncPayload.ID,
                 ColorListSyncPayload.NEO_CODEC,
-                (payload, ctx) -> ColorListManager.handleSyncPayload(payload)
+                (payload, ctx) -> {
+//                    Minecraft.getInstance().getMapTextureManager().maps.forEach((id, instance) -> {
+//                        instance.forceUpload();
+//                    });
+
+                    ColorListManager.handleSyncPayload(payload);
+                }
         );
 
         registrar.commonToServer(
@@ -32,6 +40,19 @@ public class RegisterPackets {
                     if(ctx.player() instanceof ServerPlayer player){
                         PresetManager.handleSetPresetPacket(payload, player.getServer(), player);
                     }
+                }
+                );
+
+        registrar.commonToClient(
+                PresetSyncS2CPacket.ID,
+                PresetSyncS2CPacket.NEO_PAYLOAD_CODEC,
+                (payload, ctx) -> {
+//                    Minecraft.getInstance().getMapTextureManager().maps.forEach((id, instance) -> {
+//                        instance.();
+//                    });
+
+                    PresetManager.selectedPreset = payload.chosenPreset();
+
                 }
                 );
 

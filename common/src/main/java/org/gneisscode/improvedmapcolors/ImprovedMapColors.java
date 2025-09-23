@@ -2,7 +2,9 @@ package org.gneisscode.improvedmapcolors;
 
 
 import com.google.common.base.Suppliers;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.architectury.event.events.client.ClientPlayerEvent;
+import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.registry.registries.DeferredRegister;
@@ -67,6 +69,8 @@ public final class ImprovedMapColors {
         PlayerEvent.PLAYER_JOIN.register(PresetManager::syncPresetOnPlayerJoin);
 
         LifecycleEvent.SERVER_LEVEL_LOAD.register(PresetManager::checkAndEnsurePresetPackLoaded);
+
+        CommandRegistrationEvent.EVENT.register(Commands::registerCommands);
 
 
     }

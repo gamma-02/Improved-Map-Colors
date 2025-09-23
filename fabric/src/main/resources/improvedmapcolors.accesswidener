@@ -4,3 +4,6 @@ mutable field net/minecraft/world/level/material/MapColor MATERIAL_COLORS [Lnet/
 accessible method net/minecraft/world/level/material/MapColor <init> (II)V
 mutable field net/minecraft/world/level/material/MapColor col I
 mutable field net/minecraft/world/level/material/MapColor id I
+accessible class net/minecraft/client/resources/MapTextureManager$MapInstance
+accessible field net/minecraft/client/resources/MapTextureManager maps Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
+
