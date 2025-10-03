@@ -1,0 +1,64 @@
+{
+  "improvedmapcolors.configuration.colorlist": "Liste des Couleurs des Cartes",
+  "improvedmapcolors.configuration.use_file": "Utiliser un Fichier",
+  "improvedmapcolors.configuration.color_file": "Fichier des Couleurs",
+  "improvedmapcolors.configuration.use_file.tooltip": "Utiliser une liste de couleurs provenant d'un CSV défini ci dessous.",
+  "improvedmapcolors.configuration.title": "Configuration de Improved Map Colors",
+  "improvedmapcolors.configuration.color_file.tooltip": "Chemin vers une liste CSV de couleur dans ce format: |couleur hex|[id optionnel]|\nSi aucun ID n'est donné, l'ID sera le numéro de la ligne du fichier",
+  "improvedmapcolors.configuration.colorlist.tooltip": "Liste de couleurs pour remplacer les couleurs des cartes vanilla, par défaut, les couleurs Vanilla (couleurs gneiss)",
+  "improvedmapcolors.configuration.section.improvedmapcolors.common.toml": "Configuration de Improved Map Colors",
+  "improvedmapcolors.configuration.section.improvedmapcolors.common.toml.title": "Configuration de Improved Map Colors",
+  "improvedmapcolors.configuration.colorlist.button": "Modifier",
+  "improvedmapcolors.configuration.use_blockstate_file": "Utiliser un Fichier",
+  "improvedmapcolors.configuration.blockstate_file": "Fichier de Propriétés de Blocs",
+  "improvedmapcolors.configuration.state_list": "Liste de Couleurs selon Propriétés de Blocs",
+  "improvedmapcolors.configuration.state_list.button": "Modifier",
+  "improvedmapcolors.configuration.state_list.tooltip": "List of BlockStates:ColorID to change from Vanilla BlockStates (will default to Gneiss states when/if available)",
+  "improvedmapcolors.configuration.use_blockstate_file.tooltip": "Use a list of BlockStates and colorIDs from a CSV defined below",
+  "improvedmapcolors.configuration.blockstate_file.tooltip": "Path to a CSV list of files like: \n|BlockID[statedata]|colorID<required>| OR:\n|BlockID|[statedata]|colorID<required>|",
+  "improvedmapcolors.configuration.statesConfigMode": "BlockStates Config Mode",
+  "improvedmapcolors.configuration.colorConfigMode": "Colors Config Mode",
+  "improvedmapcolors.configuration.colorConfigMode.tooltip": "What mode to use when loading color values\nOn conflicts, datapack values will override the config, and CSV values will override both datapacks and the config",
+  "improvedmapcolors.configuration.statesConfigMode.tooltip": "What mode to use when loading BlockState values\nOn conflicts, datapack values will override the config', and CSV values will override both datapacks and the config",
+
+  "improvedmapcolors.configuration.exportPack.buttonLabel": "Export Preset Pack",
+  "improvedmapcolors.configuration.exportPack": "Export Preset Pack",
+  "improvedmapcolors.configuration.packExportPath": "Preset Export Path",
+  "improvedmapcolors.configuration.packExportPath.tooltip": "Path to export a preset datapack to from listed CSVs\nnote: Config mode has to be set to CSV_FILE or ALL",
+  "improvedmapcolors.configuration.packName": "Preset Pack Name",
+  "improvedmapcolors.configuration.packName.tooltip": "Namespace of the pack you are exporting",
+
+  "improvedmapcolors.configuration.presets.title": "Presets",
+
+  "improvedmapcolors.configuration.preset.button.vanilla": "Appliquer",
+  "improvedmapcolors.configuration.preset.vanilla.tooltip": "Séléctionner le preset Vanilla (supprime les autres presets)",
+  "improvedmapcolors.configuration.preset.vanilla": "Vanilla",
+
+  "improvedmapcolors.configuration.preset.button.sepia": "Appliquer",
+  "improvedmapcolors.configuration.preset.sepia.tooltip": "Séléctionner le preset Sepia",
+  "improvedmapcolors.configuration.preset.sepia": "Sepia",
+
+  "improvedmapcolors.configuration.preset.button.grayscale": "Appliquer",
+  "improvedmapcolors.configuration.preset.grayscale.tooltip": "Séléctionner le preset Noir et Blanc",
+  "improvedmapcolors.configuration.preset.grayscale": "Noir et Blanc",
+
+  "improvedmapcolors.configuration.preset.button.gameboy": "Appliquer",
+  "improvedmapcolors.configuration.preset.gameboy.tooltip": "Séléctionner le preset Gameboy",
+  "improvedmapcolors.configuration.preset.gameboy": "Gameboy",
+
+  "improvedmapcolors.configuration.preset.button.inverted": "Appliquer",
+  "improvedmapcolors.configuration.preset.inverted.tooltip": "Séléctionner le preset Inversé",
+  "improvedmapcolors.configuration.preset.inverted": "Inversé",
+
+
+
+  "improvedmapcolors.configuration.presetsButton": "Presets",
+  "improvedmapcolors.configuration.presets": "Ouvrir l'écran des Preset",
+  "improvedmapcolors.configuration.presets.tooltip": "Afficher la liste des pressets qui sont installés avec le mod",
+
+  "item.improvedmapcolors.map_block_item": "Map Color Block Item",
+  "item.improvedmapcolors.map_block_item.tooltip": "%s and %s + %s to tune map color values",
+  "item.improvedmapcolors.map_block_item.update_color": "Map Color changed from %s to %s",
+
+  "block.improvedmapcolors.map_color_block": "Map Color Block"
+}
