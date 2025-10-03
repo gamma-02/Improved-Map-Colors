@@ -56,9 +56,9 @@
   "improvedmapcolors.configuration.presets": "Ouvrir l'écran des Preset",
   "improvedmapcolors.configuration.presets.tooltip": "Afficher la liste des pressets qui sont installés avec le mod",
 
-  "item.improvedmapcolors.map_block_item": "Map Color Block Item",
-  "item.improvedmapcolors.map_block_item.tooltip": "%s and %s + %s to tune map color values",
-  "item.improvedmapcolors.map_block_item.update_color": "Map Color changed from %s to %s",
+  "item.improvedmapcolors.map_block_item": "Couleur des Blocs sur l'Objet Carte",
+  "item.improvedmapcolors.map_block_item.tooltip": "%s et %s + %s pour ajouter la valeur des couleur",
+  "item.improvedmapcolors.map_block_item.update_color": "Couleur de la Carte changée de %s à %s",
 
-  "block.improvedmapcolors.map_color_block": "Map Color Block"
+  "block.improvedmapcolors.map_color_block": "Couleur des Bloc sur la Carte"
 }
