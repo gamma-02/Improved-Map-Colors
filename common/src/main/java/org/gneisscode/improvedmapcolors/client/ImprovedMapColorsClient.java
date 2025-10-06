@@ -34,5 +34,11 @@ public class ImprovedMapColorsClient {
         }));
     }
 
+    public static void refreshMapImages(){
+//        Minecraft.getInstance().getMapTextureManager().maps.forEach((id, instance) -> {
+//            instance.forceUpload();
+//        });
+    }
+
     
 }

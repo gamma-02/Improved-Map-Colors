@@ -8,6 +8,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.gneisscode.improvedmapcolors.ColorListManager;
 import org.gneisscode.improvedmapcolors.PresetManager;
+import org.gneisscode.improvedmapcolors.client.ImprovedMapColorsClient;
 import org.gneisscode.improvedmapcolors.networking.ColorListSyncPayload;
 import org.gneisscode.improvedmapcolors.networking.PresetSyncS2CPacket;
 import org.gneisscode.improvedmapcolors.networking.SelectPresetC2SPayload;
@@ -25,9 +26,7 @@ public class RegisterPackets {
                 ColorListSyncPayload.ID,
                 ColorListSyncPayload.NEO_CODEC,
                 (payload, ctx) -> {
-//                    Minecraft.getInstance().getMapTextureManager().maps.forEach((id, instance) -> {
-//                        instance.forceUpload();
-//                    });
+                    ImprovedMapColorsClient.refreshMapImages();
 
                     ColorListManager.handleSyncPayload(payload);
                 }
@@ -47,9 +46,7 @@ public class RegisterPackets {
                 PresetSyncS2CPacket.ID,
                 PresetSyncS2CPacket.NEO_PAYLOAD_CODEC,
                 (payload, ctx) -> {
-//                    Minecraft.getInstance().getMapTextureManager().maps.forEach((id, instance) -> {
-//                        instance.();
-//                    });
+                    ImprovedMapColorsClient.refreshMapImages();
 
                     PresetManager.selectedPreset = payload.chosenPreset();
 

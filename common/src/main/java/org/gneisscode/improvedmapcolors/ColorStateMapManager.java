@@ -59,18 +59,18 @@ public class ColorStateMapManager {
     }
 
     public static final Supplier<Boolean>
-            runConfigColors = () -> (
+            runConfigColors = () -> Boolean.valueOf((
                     CommonConfig.CONFIG.statesConfigMode.get().hasModConfig() &&
                     configStateTrackerMap != null
-            ),
-            runDatapackColors = () -> (
+            )),
+            runDatapackColors = () -> Boolean.valueOf((
                     CommonConfig.CONFIG.statesConfigMode.get().hasDatapack() &&
                     datapackStateTrackerMap != null
-            ),
-            runOverrideColors = () -> (
+            )),
+            runOverrideColors = () -> Boolean.valueOf((
                     CommonConfig.CONFIG.statesConfigMode.get().hasCSV() &&
                     overridingStateTrackerMap != null
-            );
+            ));
 
     public static MapColor getMapColorFromBlockState(BlockState instance, MapColor m) {
 
@@ -185,9 +185,9 @@ public class ColorStateMapManager {
 
         for(Property<?> p : defaultState.getProperties()){
             if(strings.contains(p.getName())){
-                hasPropertyMap.put(p, true);
+                hasPropertyMap.put(p, Boolean.TRUE);
             } else {
-                hasPropertyMap.put(p, false);
+                hasPropertyMap.put(p, Boolean.FALSE);
             }
         }
 
@@ -199,9 +199,9 @@ public class ColorStateMapManager {
         HashMap<Property<?>, Boolean> hasPropertyMap = new HashMap<>();
         for (Property<?> p : instance.getProperties()) {
             if (instance.getValue(p).equals(defaultState.getValue(p))) {
-                hasPropertyMap.put(p, false);
+                hasPropertyMap.put(p, Boolean.FALSE);
             } else {
-                hasPropertyMap.put(p, true);
+                hasPropertyMap.put(p, Boolean.TRUE);
             }
         }
 

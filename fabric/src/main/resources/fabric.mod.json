@@ -29,11 +29,11 @@
   ],
   "depends": {
     "fabricloader": ">=0.17.2",
-    "minecraft": "~1.21.8",
+    "minecraft": ">=1.21",
     "java": ">=21",
-    "architectury": ">=17.0.8",
+    "architectury": ">=13.0.3",
     "fabric-api": "*",
-    "forgeconfigapiport": ">=21.8.1"
+    "forgeconfigapiport": ">=21.0.8"
   },
   "suggests": {
     "another-mod": "*"

@@ -23,16 +23,21 @@ side = "BOTH"
 [[dependencies.improvedmapcolors]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.8,)"
+versionRange = "[1.21,1.21.8]"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.improvedmapcolors]]
 modId = "architectury"
 type = "required"
-versionRange = "[17.0.8,)"
+versionRange = "[13.0.3,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[mixins]]
 config = "improvedmapcolors.mixins.json"
+
+[[accessTransformers]]
+## The file is relative to the output directory of the resources, or the root path inside the jar when compiled
+## The 'resources' directory represents the root output directory of the resources
+file="META-INF/accesstransformer.cfg"

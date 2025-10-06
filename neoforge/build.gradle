@@ -41,7 +41,7 @@ dependencies {
 
 //    runtimeOnly "fuzs.forgeconfigscreens:forgeconfigscreens-neoforge:${project.forge_config_version}"
     include 'com.opencsv:opencsv:5.12.0'
-
+    implementation 'com.opencsv:opencsv:5.12.0'
 }
 
 processResources {
